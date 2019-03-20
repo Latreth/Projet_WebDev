@@ -16,7 +16,7 @@ app.get('/', function (req, res) {
 });
 
 
-io.sockets.on('connection', function (socket, pseudo) {
+io.on('connection', function (socket, pseudo) {
 
     // Dès qu'on nous donne un pseudo, on le stocke en variable de session et on informe les autres personnes
 
