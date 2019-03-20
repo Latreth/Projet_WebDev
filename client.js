@@ -192,6 +192,7 @@ function restrict(L, y, x){
 }
 
 function move(x, y, dx, dy){
-    G[x+dx, y+dy] = G[x, y]
+    G[x+dx][y+dy] = G[x][y];
     G[x][y] = false;
+    deplacement(y, x, dy, dx);
 }
