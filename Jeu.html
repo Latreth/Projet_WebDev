@@ -1,24 +1,14 @@
 <!DOCTYPE html>
 <html lang='fr'>
 <head>
+<meta charset="UTF-8">
 <title>Mon Jeu</title>
 <link rel="stylesheet" href="style.css">
-        <style>
-
-            #zone_chat strong {
-
-                color: white;
-
-                background-color: black;
-
-                padding: 2px;
-
-            }
-
-        </style>
+<script src="/home/florent/Centrale/Developpemet Web/Projet_WebDev/node_modules/socket.io-client/socket.io.js"></script>
 </head>
 <body>
   <canvas id="canvas" height=400 width=400></canvas>
+  <canvas id="pieces" height=400 width=400></canvas>
   <script src = "Terrain.js"></script>
   <h1>Salle de Chat</h1>
         <form action="/" method="post" id="formulaire_chat">
@@ -28,10 +18,7 @@
         <section id="zone_chat">
         </section>
         <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
-
-        <script src="node_modules/socket.io/socket.io.js"></script>
-
-        <script src="socket.io/socket.io.js">
+        <script>
             // Connexion à socket.io
             var socket = io.connect('http://localhost:8080');
             // On demande le pseudo, on l'envoie au serveur et on l'affiche dans le titre
@@ -42,40 +29,56 @@
             socket.on('message', function(data) {
                 insereMessage(data.pseudo, data.message)
             })
-
-
             // Quand un nouveau client se connecte, on affiche l'information
-
             socket.on('nouveau_client', function(pseudo) {
-
                 $('#zone_chat').prepend('<p><em>' + pseudo + ' a rejoint le Chat !</em></p>');
-
             })
-
-
             // Lorsqu'on envoie le formulaire, on transmet le message et on l'affiche sur la page
-
             $('#formulaire_chat').submit(function () {
                 var message = $('#message').val();
                 socket.emit('message', message); // Transmet le message aux autres
                 insereMessage(pseudo, message); // Affiche le message aussi sur notre page
                 $('#message').val('').focus(); // Vide la zone de Chat et remet le focus dessus
                 return false; // Permet de bloquer l'envoi "classique" du formulaire
-
             });
-
-            
-
             // Ajoute un message dans la page
-
             function insereMessage(pseudo, message) {
-
                 $('#zone_chat').prepend('<p><strong>' + pseudo + '</strong> ' + message + '</p>');
-
             }
-
+            
         </script>
-  
-  
+        <script src='client.js'></script>
+        <script>
+        var ctx2 = document.getElementById('pieces').getContext('2d');
+        function draw(x,y,url){
+          //var ctx = document.getElementById('canvas').getContext('2d');
+          var image = new Image();
+          image.addEventListener('load',function(){
+            var less= image.height;
+            ctx2.drawImage(image,x-32,y-less-4);
+            //execute les instructions draw_image ici
+          },false);
+          image.src = url;
+          image.load;
+        }
+        function undraw(x,y){
+          ctx2.clearRect(x,y,40,40);
+        }
+        function deplacement(x,y,deltax,deltay){ //deltax et deltay compris entre -8 et 8 pour le déplacement
+          undraw(x,y);
+          undraw(x+deltax,y+deltay);
+          draw(x+deltax,y+deltay,'Images/pions/'+grid[x][y].type+'_'+grid[x][y].player+'.png');
+        }
+        //initialisation du plateau avec toute les pièces
+        for(i=1;i<9;i++){
+          for(j=1;j<9;j++){
+            if (grid[i-1][j-1]){
+              draw(j*40,i*40,'Images/pions/'+grid[i-1][j-1].type+'_'+grid[i-1][j-1].player+'.png');
+            }
+          }
+        }
+        //setTimeout(()=>{undraw(40,0);}, 2000); //Test de undraw
+        setTimeout(()=>{deplacement(0,0,3*40,3*40);},2000); //Test de deplacement
+        </script>
 </body>
 </html>
