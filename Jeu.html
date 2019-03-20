@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <title>Mon Jeu</title>
 <link rel="stylesheet" href="style.css">
+<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 <script src="/home/florent/Centrale/Developpemet Web/Projet_WebDev/node_modules/socket.io-client/socket.io.js"></script>
 </head>
 <body>
@@ -11,13 +12,18 @@
   <canvas id="pieces" height=400 width=400></canvas>
   <script src = "Terrain.js"></script>
   <h1>Salle de Chat</h1>
-        <form action="/" method="post" id="formulaire_chat">
-            <input type="text" name="message" id="message" placeholder="Votre message..." size="50" autofocus />
-            <input type="submit" id="envoi_message" value="Envoyer" />
-        </form>
-        <section id="zone_chat">
-        </section>
-        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <div id="volet_clos">
+          <div id="volet">
+            <form action="/" method="post" id="formulaire_chat">
+              <input type="text" name="message" id="message" placeholder="Votre message..." size="50" autofocus />
+              <input type="submit" id="envoi_message" value="Envoyer" />
+            </form>
+            <section id="zone_chat">
+            </section>
+            <a href="#volet" class="ouvrir" aria-hidden="true">Chat</a>
+              <a href="#volet_clos" class="fermer" aria-hidden="true">Réduire</a>
+          </div>
+        </div>
         <script>
             // Connexion à socket.io
             var socket = io.connect('http://localhost:8080');
