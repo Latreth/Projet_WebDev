@@ -4,3 +4,8 @@
   left:50%;
   transform: translate(-50%,-50%);
 }
+#zone_chat strong {
+  color: white;
+  background-color: black;
+  padding: 2px;
+}
