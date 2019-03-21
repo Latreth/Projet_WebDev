@@ -14,12 +14,12 @@ function initGrille(){
 		];
 		if(k == 2) return [
 			{type: 'tour', player: p},
-			{type: 'fou', player: p},
 			{type: 'cheval', player: p},
+			{type: 'fou', player: p},
 			{type: 'reine', player: p},
 			{type: 'roi', player: p},
-			{type: 'cheval', player: p},
 			{type: 'fou', player: p},
+			{type: 'cheval', player: p},
 			{type: 'tour', player: p}
 		];
 	}

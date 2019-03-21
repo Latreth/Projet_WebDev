@@ -2,7 +2,7 @@
 <html lang='fr'>
 <head>
 <meta charset="UTF-8">
-<title>Mon Jeu</title>
+<title>Jeu d'Echecs</title>
 <link rel="stylesheet" href="style.css">
 <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 <script src="/home/florent/Centrale/Developpemet Web/Projet_WebDev/node_modules/socket.io-client/socket.io.js"></script>
@@ -10,6 +10,7 @@
 <body>
   <canvas id="canvas" height=400 width=400></canvas>
   <canvas id="pieces" height=400 width=400></canvas>
+  <canvas id="pieces_prise" height=80 width=800></canvas>
   <script src = "Terrain.js"></script>
         <div id="volet_clos">
           <div id="volet">
@@ -56,13 +57,16 @@
         <script src='client.js'></script>
         <script>
         var ctx2 = document.getElementById('pieces').getContext('2d');
+        var ctx3 = document.getElementById('pieces_prise').getContext('2d');
+        ctx3.font ="20px Georgia";
+        ctx3.strokeText("Pièces Prises :",0,20);
+        ctx3.x = 0;
+        ctx3.y = 40;
         function draw(x,y,url){
-          //var ctx = document.getElementById('canvas').getContext('2d');
           var image = new Image();
           image.addEventListener('load',function(){
             var less= image.height;
             ctx2.drawImage(image,x-32,y-less-4);
-            //execute les instructions draw_image ici
           },false);
           image.src = url;
           image.load;
@@ -72,8 +76,13 @@
         }
         function deplacement(x,y,deltax,deltay){ //deltax et deltay compris entre -8 et 8 pour le déplacement
           undraw(x,y);
+          if (grid[x+deltax/40][y+deltay/40]!=false){
+            var image = new Image();
+            image.src = 'Images/pions/'+grid[x+deltax/40][y+deltay/40].type+'_'+grid[x+deltax/40][y+deltay/40].player+'.png'
+            ctx3.drawImage(image,ctx3.x,ctx3.y); //afficher en dessous de l'échiquier la pièce mangée
+          }
           undraw(x+deltax,y+deltay);
-          draw(x+deltax,y+deltay,'Images/pions/'+grid[x][y].type+'_'+grid[x][y].player+'.png');
+          draw(x+deltax+40,y+deltay+40,'Images/pions/'+grid[x][y].type+'_'+grid[x][y].player+'.png');
         }
         //initialisation du plateau avec toute les pièces
         for(i=1;i<9;i++){
@@ -83,8 +92,10 @@
             }
           }
         }
+        var image = new Image();
+        image.src='Images/pions/cheval_2.png';
         //setTimeout(()=>{undraw(40,0);}, 2000); //Test de undraw
-        setTimeout(()=>{deplacement(0,0,3*40,3*40);},2000); //Test de deplacement
+        setTimeout(()=>{deplacement(0,0,1*40,1*40);},2000); //Test de deplacement
         </script>
 </body>
 </html>
