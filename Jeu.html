@@ -2,10 +2,10 @@
 <html lang='fr'>
 <head>
 <meta charset="UTF-8">
-<title>Jeu d'Echecs</title>
+<title>ChessRoom</title>
 <link rel="stylesheet" href="style.css">
 <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
-<script src="/home/florent/Centrale/Developpemet Web/Projet_WebDev/node_modules/socket.io-client/socket.io.js"></script>
+<script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
   <canvas id="canvas" height=400 width=400></canvas>
@@ -14,7 +14,8 @@
   <script src = "Terrain.js"></script>
         <div id="volet_clos">
           <div id="volet">
-            <h1>Salle de Chat</h1>
+            <h2>Chat</h2>
+            <h5>Veuillez rester poli et courtois dans le chat, merci</h5>
             <form action="/" method="post" id="formulaire_chat">
               <input type="text" name="message" id="message" placeholder="Votre message..." size="50" autofocus />
               <input type="submit" id="envoi_message" value="Envoyer" />
@@ -96,6 +97,7 @@
         image.src='Images/pions/cheval_2.png';
         //setTimeout(()=>{undraw(40,0);}, 2000); //Test de undraw
         setTimeout(()=>{deplacement(0,0,1*40,1*40);},2000); //Test de deplacement
+        console.log(grid);
         </script>
 </body>
 </html>

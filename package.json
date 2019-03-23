@@ -2,9 +2,10 @@
   "name": "chat",
   "version": "0.1.0",
   "dependencies": {
-    "ent": "~0.1.0",
-    "express": "~3.3.4",
-    "socket.io": "^1.2.1"
+    "ent": "^0.1.0",
+    "express": "^3.3.8",
+    "socket.io": "^1.7.4",
+    "socket.io-client": "^2.2.0"
   },
   "author": "Flo",
   "description": "Chat avec socket.io"

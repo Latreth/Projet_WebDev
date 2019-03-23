@@ -1,0 +1,30 @@
+#ia {	
+	padding: 1px 0;
+	float: left;
+	width: 240px;
+	background-color: white;
+	text-align: center;
+}
+
+#multiplayer {
+	padding: 1px 0;
+	margin-left: 250px;
+	float: right;
+	background-color: white;
+	text-align: center;
+}
+
+#dbl {
+	max-width: 978px;
+	margin: auto;
+}
+
+#search{
+	text-align: center;
+}
+
+body {
+	background-color: black;
+}
+
+
