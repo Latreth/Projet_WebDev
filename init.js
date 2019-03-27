@@ -52,20 +52,21 @@ function select(x, y){
 	let moves = [];
 	if(type == 'pion'){
 		if(p == 1){
-			if(!G[x+1][y]) moves.push('+0+1');
-			if(x == 1 && !G[x+2][y]) moves.push('+0+2');
+			if (x+1 <8){if(!G[x+1][y]) moves.push('+0+1');}
+			if(x == 1 && !G[x+2][y]) moves.push('+0+2'); 
 		}
 		else{
-			if(!G[x-1][y]) moves.push('+0-1');
-			if(x == 6 && !G[x-2][y]) moves.push('+0-2');
+			if (x-1 >0){if(!G[x-1][y]) moves.push('+0-1');}
+			if(x == 6 && !G[x-2][y]) moves.push('+0-2'); 
 		}
-		if(!!G[x+1] && !!G[x+1][y+1] && G[x+1][y+1].player != p) moves.push('+1+1');
-		if(!!G[x-1] && !!G[x-1][y+1] && G[x-1][y+1].player != p) moves.push('-1+1');
-		if(!!G[x+1] && !!G[x+1][y-1] && G[x+1][y-1].player != p) moves.push('+1-1');
-		if(!!G[x-1] && !!G[x-1][y-1] && G[x-1][y-1].player != p) moves.push('-1-1');
+		if (x+1 <8 && y+1 <8) {if(!!G[x+1] && !!G[x+1][y+1] && G[x+1][y+1].player != p) moves.push('+1+1');}
+		if (x-1>=0 && y+1 <8) {if(!!G[x-1] && !!G[x-1][y+1] && G[x-1][y+1].player != p) moves.push('-1+1');}
+		if (x+1 <8 && y-1 >=0) {if(!!G[x+1] && !!G[x+1][y-1] && G[x+1][y-1].player != p) moves.push('+1-1');}
+		if (x-1 >=0 && y-1 >=0) {if(!!G[x-1] && !!G[x-1][y-1] && G[x-1][y-1].player != p) moves.push('-1-1');}
 	}
 	if(type == 'tour' || type == "reine"){
 		for(let i = 1; i <= 8; ++i){
+			if (y+i >7) break;
 			if(!G[x][y+i]) moves.push('+' + i + '+0');
 			if(!!G[x][y+i] && G[x][y+i].player == p){
 				break;
@@ -76,6 +77,7 @@ function select(x, y){
 			}
 		}
 		for(let i = 1; i <= 8; ++i){
+			if (y-i < 0) break;
 			if(!G[x][y-i]) moves.push('-' + i + '+0');
 			if(!!G[x][y-i] && G[x][y-i].player == p){
 				break;
@@ -86,6 +88,7 @@ function select(x, y){
 			}
 		}
 		for(let i = 1; i <= 8; ++i){
+			if (x+i>7) break;
 			if(!!G[x+i] && !G[x+i][y]) moves.push('+0+' + i);
 			if(!!G[x+i] && !!G[x+i][y] && G[x+i][y].player == p){
 				break;
@@ -96,7 +99,8 @@ function select(x, y){
 			}
 		}
 		for(let i = 1; i <= 8; ++i){
-			if(!!G[x-i] && !G[x-i][y]) moves.push('+0+' + i);
+			if (x-i <0) break;
+			if(!!G[x-i] && !G[x-i][y]) moves.push('+0-' + i);
 			if(!!G[x-i] && !!G[x-i][y] && G[x-i][y].player == p){
 				break;
 			}
@@ -108,6 +112,7 @@ function select(x, y){
 	}
 	if(type == 'fou' || type == "reine"){
 		for(let i = 1; i <= 8; ++i){
+			if (x+i > 7 || y+i >7) break;
 			if(!!G[x+i] && !G[x+i][y+i]) moves.push('+' + i + '+' + i);
 			if(!!G[x+i] && !!G[x+i][y+i] && G[x+i][y+i].player == p){
 				break;
@@ -118,6 +123,7 @@ function select(x, y){
 			}
 		}
 		for(let i = 1; i <= 8; ++i){
+			if (x-i<0 || y+i >7) break;
 			if(!!G[x-i] && !G[x-i][y+i]) moves.push('-' + i + '+' + i);
 			if(!!G[x-i] && !!G[x-i][y+i] && G[x-i][y+i].player == p){
 				break;
@@ -128,6 +134,7 @@ function select(x, y){
 			}
 		}
 		for(let i = 1; i <= 8; ++i){
+			if (x+i >7 || y-i < 0 ) break;
 			if(!!G[x+i] && !G[x+i][y-i]) moves.push('+' + i + '-' + i);
 			if(!!G[x+i] && !!G[x+i][y-i] && G[x+i][y-i].player == p){
 				break;
@@ -138,6 +145,7 @@ function select(x, y){
 			}
 		}
 		for(let i = 1; i <= 8; ++i){
+			if (x-i <0 || y-i <0) break;
 			if(!!G[x-i] && !G[x-i][y-i]) moves.push('-' + i + '-' + i);
 			if(!!G[x-i] && !!G[x-i][y-i] && G[x-i][y-i].player == p){
 				break;
@@ -149,14 +157,14 @@ function select(x, y){
 		}
 	}
 	if(type == 'cheval'){
-		if(!!G[x+1] && (!G[x+1][y+2] || !!G[x+1][y+2] && G[x+1][y+2].player != p)) moves.push('+1+2');
-		if(!!G[x-1] && (!G[x-1][y+2] || !!G[x-1][y+2] && G[x-1][y+2].player != p)) moves.push('-1+2');
-		if(!!G[x+1] && (!G[x+1][y-2] || !!G[x+1][y-2] && G[x+1][y-2].player != p)) moves.push('+1-2');
-		if(!!G[x-1] && (!G[x-1][y-2] || !!G[x-1][y-2] && G[x-1][y-2].player != p)) moves.push('-1-2');
-		if(!!G[x+2] && (!G[x+2][y+1] || !!G[x+2][y+1] && G[x+2][y+1].player != p)) moves.push('+2+1');
-		if(!!G[x-2] && (!G[x-2][y+1] || !!G[x-2][y+1] && G[x-2][y+1].player != p)) moves.push('-2+1');
-		if(!!G[x+2] && (!G[x+2][y-1] || !!G[x+2][y-1] && G[x+2][y-1].player != p)) moves.push('+2-1');
-		if(!!G[x-2] && (!G[x-2][y-1] || !!G[x-2][y-1] && G[x-2][y-1].player != p)) moves.push('-2-1');
+		if (x+1<8&&y+2<8) {if(!!G[x+1] && (!G[x+1][y+2] || !!G[x+1][y+2] && G[x+1][y+2].player != p)) moves.push('+1+2');}
+		if (y-2 >=0&&x+1<8) {if(!!G[x+1] && (!G[x+1][y-2] || !!G[x+1][y-2] && G[x+1][y-2].player != p)) moves.push('+1-2');}
+		if (x-1 >= 0&&y+2<8) {if(!!G[x-1] && (!G[x-1][y+2] || !!G[x-1][y+2] && G[x-1][y+2].player != p)) moves.push('-1+2');}
+		if (y-2 >= 0 && x-1>=0) {if(!!G[x-1] && (!G[x-1][y-2] || !!G[x-1][y-2] && G[x-1][y-2].player != p)) moves.push('-1-2');}
+		if (x+2<8 && y+1<8) {if(!!G[x+2] && (!G[x+2][y+1] || !!G[x+2][y+1] && G[x+2][y+1].player != p)) moves.push('+2+1');}
+		if (x-2 >=0 && y+1<8){if(!!G[x-2] && (!G[x-2][y+1] || !!G[x-2][y+1] && G[x-2][y+1].player != p)) moves.push('-2+1');}
+		if (y-1>=0 && x+2<8){if(!!G[x+2] && (!G[x+2][y-1] || !!G[x+2][y-1] && G[x+2][y-1].player != p)) moves.push('+2-1');}
+		if (x-2>=0 && y-1>=0) {if(!!G[x-2] && (!G[x-2][y-1] || !!G[x-2][y-1] && G[x-2][y-1].player != p)) moves.push('-2-1');}
 	}
 	if(type == "roi"){
 		if(!!G[x+1] && (!G[x+1][y] || !!G[x+1][y] && G[x+1][y].player != p)) moves.push('+1+0');
@@ -172,7 +180,7 @@ function select(x, y){
 	return restrict(moves, x, y);
 }
 
-function restrict(L, y, x){
+function restrict(L, x, y){
 	let D = [];
 	L.forEach((d) => {
 		let dx = parseInt(d[3]);
@@ -226,20 +234,20 @@ for(i=1;i<9;i++){
 		}
 	}
 }
-var image = new Image();
-image.src='Images/pions/cheval_2.png';
-        function changement_pion(nouveau){
-          if (nouveau==1) {
-            alert("Vous ne pouvez pas prendre la couleur de l'adversaire !")
-            return 0
-          }
-          for (var i = 0; i <8; i++) {
-             for (var j=0; j <8; j++) {
-               if (grid[i][j].player == 2) {
+//var image = new Image();
+//image.src='Images/pions/cheval_2.png';
+function changement_pion(nouveau){
+	if (nouveau==1) {
+		alert("Vous ne pouvez pas prendre la couleur de l'adversaire !")
+		return 0
+	}
+    for (var i = 0; i <8; i++) {
+        for (var j=0; j <8; j++) {
+            if (grid[i][j].player == 2) {
                 undraw((j+1)*40,(i+1)*40);
                 draw((j+1)*40,(i+1)*40,'Images/pions/'+grid[i][j].type+'_'+nouveau+'.png');
                 grid[i][j].player = nouveau;
-               }
-             }
-           }
+            }
         }
+    }
+}
