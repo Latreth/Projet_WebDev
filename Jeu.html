@@ -27,33 +27,51 @@
           </div>
         </div>
         <script>
-            // Connexion à socket.io
-            var socket = io.connect('http://localhost:8080');
-            // On demande le pseudo, on l'envoie au serveur et on l'affiche dans le titre
-            var pseudo = prompt('Quel est votre pseudo ?');
-            socket.emit('nouveau_client', pseudo);
-            document.title = pseudo + ' - ' + document.title;
-            // Quand on reçoit un message, on l'insère dans la page
-            socket.on('message', function(data) {
-                insereMessage(data.pseudo, data.message)
-            })
-            // Quand un nouveau client se connecte, on affiche l'information
-            socket.on('nouveau_client', function(pseudo) {
-                $('#zone_chat').prepend('<p><em>' + pseudo + ' a rejoint le Chat !</em></p>');
-            })
-            // Lorsqu'on envoie le formulaire, on transmet le message et on l'affiche sur la page
-            $('#formulaire_chat').submit(function () {
-                var message = $('#message').val();
-                socket.emit('message', message); // Transmet le message aux autres
-                insereMessage(pseudo, message); // Affiche le message aussi sur notre page
-                $('#message').val('').focus(); // Vide la zone de Chat et remet le focus dessus
-                return false; // Permet de bloquer l'envoi "classique" du formulaire
-            });
-            // Ajoute un message dans la page
-            function insereMessage(pseudo, message) {
-                $('#zone_chat').prepend('<p><strong>' + pseudo + '</strong> ' + message + '</p>');
+          var pseudo = prompt('Quel est votre pseudo ?');
+          document.title = pseudo + ' - ' + document.title;
+
+          // Connexion au serveur
+          const IP = "207.154.242.88";
+          var ws = new WebSocket('ws://' + IP + ':80');
+
+          var clientID = "";
+          ws.onmessage = (msg) => {
+            let data = JSON.parse(msg.data);
+            data = JSON.parse(data.msg);
+            console.log(data);
+            if(data.type == "_id"){
+              clientID = data.clientID;
+              sendCmd(JSON.stringify({type: "nouveau_joueur", pseudo: pseudo}));
             }
+            else if(data.type == "chat_message"){
+              insereMessage(data.pseudo, data.message);
+            }
+            else if(data.type == "nouveau_joueur"){
+              $('#zone_chat').prepend('<p><em>' + data.pseudo + ' a rejoint le Chat !</em></p>');
+            }
+          }
+          function sendCmd(str){
+            str = clientID + " " + str;
+            let pack = {};
+            pack.cmd = str;
+            let data = JSON.stringify(pack);
+            ws.send(data);
+          }
+
+          // On demande le pseudo, on l'envoie au serveur et on l'affiche dans le titre
+
+          // Lorsqu'on envoie le formulaire, on transmet le message et on l'affiche sur la page
+          $('#formulaire_chat').submit(function() {
+            var message = $('#message').val();
+            sendCmd(JSON.stringify({type: "chat_message", pseudo: pseudo, message: message})); // Transmet le message aux autres
             
+            $('#message').val('').focus(); // Vide la zone de Chat et remet le focus dessus
+            return false; // Permet de bloquer l'envoi "classique" du formulaire
+          });
+          // Ajoute un message dans la page
+          function insereMessage(pseudo, message) {
+            $('#zone_chat').prepend('<p><strong>' + pseudo + '</strong> ' + message + '</p>');
+          }
         </script>
         <script src='client.js'></script>
         <script>

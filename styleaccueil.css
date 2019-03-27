@@ -1,21 +1,22 @@
 #ia {	
-	padding: 1px 0;
+	padding: 30% 0;
 	float: left;
 	width: 240px;
 	background-color: white;
 	text-align: center;
+	margin-top: 15%;
 }
 
 #multiplayer {
-	padding: 1px 0;
-	margin-left: 250px;
+	padding: 26% 0;
 	float: right;
 	background-color: white;
 	text-align: center;
+	margin-top: 15%;
 }
 
 #dbl {
-	max-width: 978px;
+	max-width: 600px;
 	margin: auto;
 }
 
@@ -23,8 +24,23 @@
 	text-align: center;
 }
 
+#spawner{
+	position: absolute;
+  	animation-name: try;
+  	animation-duration: 2s;
+  	animation-timing-function: linear;
+  	animation-iteration-count: 1;
+  	background-color: red;
+}
+
 body {
 	background-color: black;
 }
 
 
+	@keyframes try {
+  		0%   {top:0px;transform:rotate(0deg);}
+  		40% {top:300px;transform:rotate(50deg);}
+  		80%  {top:600px;transform:rotate(-50deg);}
+  		100% {top:720px;transform: rotate(0deg);}
+	}

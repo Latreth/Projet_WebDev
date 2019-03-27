@@ -8,7 +8,6 @@
 <body>
 	<div id="dbl">
 		<div id="ia">
-			<!--https://pascal.developpez.com/telecharger/detail/id/2819/JS-Echecs-->
 			<h1>Jouer contre l'IA</h1>
 			<a href="Jeuia.html"><button id="searchia">Jouez !</button></a>
 		</div>
@@ -20,5 +19,46 @@
 			</div>
 		</div>
 	</div>
+	<div id="test"></div>
+	<!--https://pascal.developpez.com/telecharger/detail/id/2819/JS-Echecs-->
+	<script type="text/javascript">
+		//faire une fonction qui fait spawn des images de pièces aléatoirement dans le top 
+		var choix = ['pion','cheval','fou','reine','roi','tour'];
+		function spawn() {
+			var img = document.createElement('img');
+			var piece = Math.floor(Math.random()*6);
+			img.src = 'Images/pions/'+choix[piece]+'_1.png';
+			img.id = "spawner";
+			img.style.transform = "rotate(0deg)";
+			img.style.position = "absolute";
+			var pos = Math.floor(Math.random()*(window.innerWidth - img.width)+1)+img.width;
+			img.style.left = pos + "px";
+			/*var div = document.createElement('div');
+			div.id = "gen";
+			div.style.left = img.style.left;
+			console.log(div.style.left);
+			console.log(img.style.left);*/
+			//div.appendChild(img);
+			document.body.appendChild(img);
+		}
+		//faire une fonction qui détruit les éléments à plus de window.height du top
+		function detruire(){
+			for (var i = 0; i < document.body.childNodes.length; i++) {
+				console.log(document.getElementById("spawner"));
+				var elm = document.getElementById("spawner");
+				if (elm.style.top > 700){
+					document.body.removeChild(elm);
+				}
+			}
+		}
+		//faire la fonction appelante pour lancer le script au chargement de la page
+		function go(){
+			for (var i = 0; i <15000; i++) {
+				setTimeout(()=>{spawn();detruire();},2000);
+				console.log("je suis la");
+			}
+		}
+		go();
+	</script>
 </body>
 </html>
