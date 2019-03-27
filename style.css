@@ -78,3 +78,35 @@
 			position: fixed; 
 			top: 55px; left: 0;
 		}
+
+
+#changer_pions{
+	position: absolute;
+	top: 30%;
+	left: 80%;
+	transform: translate(-50%,-50%);
+	text-align: center;
+}
+#tiles{
+	background-color: #fff0;
+	position: absolute;
+	display: flex;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	padding-bottom: 80px;
+	padding-right: 80px;
+}
+
+.tile{
+	width: 40px;
+	height: 40px;
+	transition: 0.2s;
+	cursor: pointer;
+}
+.tile:hover{
+	background-color: #ed500099;
+}
+.tile:active{
+	background-color: #ede60099;
+}

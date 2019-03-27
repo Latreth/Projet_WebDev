@@ -1,0 +1,245 @@
+var grid = initGrille();
+
+function initGrille(){
+	function initLigne(k, p){
+		if(k == 1) return [
+			{type: 'pion', player: p},
+			{type: 'pion', player: p},
+			{type: 'pion', player: p},
+			{type: 'pion', player: p},
+			{type: 'pion', player: p},
+			{type: 'pion', player: p},
+			{type: 'pion', player: p},
+			{type: 'pion', player: p}
+		];
+		if(k == 2) return [
+			{type: 'tour', player: p},
+			{type: 'cheval', player: p},
+			{type: 'fou', player: p},
+			{type: 'reine', player: p},
+			{type: 'roi', player: p},
+			{type: 'fou', player: p},
+			{type: 'cheval', player: p},
+			{type: 'tour', player: p}
+		];
+	}
+	let L = [];
+	let i = 1;
+	while(i <= 8){
+		L[i-1] = false;
+		++i;
+	}
+	let G = [];
+	i = 1;
+	while(i <= 8){
+		G[i-1] = L;
+		++i;
+	}
+	G[0] = initLigne(2, 1);
+	G[1] = initLigne(1, 1);
+	G[6] = initLigne(1, 2);
+	G[7] = initLigne(2, 2);
+	G[0][3].type = 'roi';
+	G[0][4].type = 'reine';
+	return G;
+}
+
+function select(x, y){
+	let G = grid;
+	if(!G[x][y]) return;
+	let type = G[x][y].type;
+	let p = G[x][y].player;
+	let moves = [];
+	if(type == 'pion'){
+		if(p == 1){
+			if(!G[x+1][y]) moves.push('+0+1');
+			if(x == 1 && !G[x+2][y]) moves.push('+0+2');
+		}
+		else{
+			if(!G[x-1][y]) moves.push('+0-1');
+			if(x == 6 && !G[x-2][y]) moves.push('+0-2');
+		}
+		if(!!G[x+1] && !!G[x+1][y+1] && G[x+1][y+1].player != p) moves.push('+1+1');
+		if(!!G[x-1] && !!G[x-1][y+1] && G[x-1][y+1].player != p) moves.push('-1+1');
+		if(!!G[x+1] && !!G[x+1][y-1] && G[x+1][y-1].player != p) moves.push('+1-1');
+		if(!!G[x-1] && !!G[x-1][y-1] && G[x-1][y-1].player != p) moves.push('-1-1');
+	}
+	if(type == 'tour' || type == "reine"){
+		for(let i = 1; i <= 8; ++i){
+			if(!G[x][y+i]) moves.push('+' + i + '+0');
+			if(!!G[x][y+i] && G[x][y+i].player == p){
+				break;
+			}
+			if(!!G[x][y+i] && G[x][y+i].player != p){
+				moves.push('+' + i + '+0');
+				break;
+			}
+		}
+		for(let i = 1; i <= 8; ++i){
+			if(!G[x][y-i]) moves.push('-' + i + '+0');
+			if(!!G[x][y-i] && G[x][y-i].player == p){
+				break;
+			}
+			if(!!G[x][y-i] && G[x][y-i].player != p){
+				moves.push('-' + i + '+0');
+				break;
+			}
+		}
+		for(let i = 1; i <= 8; ++i){
+			if(!!G[x+i] && !G[x+i][y]) moves.push('+0+' + i);
+			if(!!G[x+i] && !!G[x+i][y] && G[x+i][y].player == p){
+				break;
+			}
+			if(!!G[x+i] && !!G[x+i][y] && G[x+i][y].player != p){
+				moves.push('+0+' + i);
+				break;
+			}
+		}
+		for(let i = 1; i <= 8; ++i){
+			if(!!G[x-i] && !G[x-i][y]) moves.push('+0+' + i);
+			if(!!G[x-i] && !!G[x-i][y] && G[x-i][y].player == p){
+				break;
+			}
+			if(!!G[x-i] && !!G[x-i][y] && G[x-i][y].player != p){
+				moves.push('+0-' + i);
+				break;
+			}
+		}
+	}
+	if(type == 'fou' || type == "reine"){
+		for(let i = 1; i <= 8; ++i){
+			if(!!G[x+i] && !G[x+i][y+i]) moves.push('+' + i + '+' + i);
+			if(!!G[x+i] && !!G[x+i][y+i] && G[x+i][y+i].player == p){
+				break;
+			}
+			if(!!G[x+i] && !!G[x+i][y+i] && G[x+i][y+i].player != p){
+				moves.push('+' + i + '+' + i);
+				break;
+			}
+		}
+		for(let i = 1; i <= 8; ++i){
+			if(!!G[x-i] && !G[x-i][y+i]) moves.push('-' + i + '+' + i);
+			if(!!G[x-i] && !!G[x-i][y+i] && G[x-i][y+i].player == p){
+				break;
+			}
+			if(!!G[x-i] && !!G[x-i][y+i] && G[x-i][y+i].player != p){
+				moves.push('-' + i + '+' + i);
+				break;
+			}
+		}
+		for(let i = 1; i <= 8; ++i){
+			if(!!G[x+i] && !G[x+i][y-i]) moves.push('+' + i + '-' + i);
+			if(!!G[x+i] && !!G[x+i][y-i] && G[x+i][y-i].player == p){
+				break;
+			}
+			if(!!G[x+i] && !!G[x+i][y-i] && G[x+i][y-i].player != p){
+				moves.push('+' + i + '-' + i);
+				break;
+			}
+		}
+		for(let i = 1; i <= 8; ++i){
+			if(!!G[x-i] && !G[x-i][y-i]) moves.push('-' + i + '-' + i);
+			if(!!G[x-i] && !!G[x-i][y-i] && G[x-i][y-i].player == p){
+				break;
+			}
+			if(!!G[x-i] && !!G[x-i][y-i] && G[x-i][y-i].player != p){
+				moves.push('-' + i + '-' + i);
+				break;
+			}
+		}
+	}
+	if(type == 'cheval'){
+		if(!!G[x+1] && (!G[x+1][y+2] || !!G[x+1][y+2] && G[x+1][y+2].player != p)) moves.push('+1+2');
+		if(!!G[x-1] && (!G[x-1][y+2] || !!G[x-1][y+2] && G[x-1][y+2].player != p)) moves.push('-1+2');
+		if(!!G[x+1] && (!G[x+1][y-2] || !!G[x+1][y-2] && G[x+1][y-2].player != p)) moves.push('+1-2');
+		if(!!G[x-1] && (!G[x-1][y-2] || !!G[x-1][y-2] && G[x-1][y-2].player != p)) moves.push('-1-2');
+		if(!!G[x+2] && (!G[x+2][y+1] || !!G[x+2][y+1] && G[x+2][y+1].player != p)) moves.push('+2+1');
+		if(!!G[x-2] && (!G[x-2][y+1] || !!G[x-2][y+1] && G[x-2][y+1].player != p)) moves.push('-2+1');
+		if(!!G[x+2] && (!G[x+2][y-1] || !!G[x+2][y-1] && G[x+2][y-1].player != p)) moves.push('+2-1');
+		if(!!G[x-2] && (!G[x-2][y-1] || !!G[x-2][y-1] && G[x-2][y-1].player != p)) moves.push('-2-1');
+	}
+	if(type == "roi"){
+		if(!!G[x+1] && (!G[x+1][y] || !!G[x+1][y] && G[x+1][y].player != p)) moves.push('+1+0');
+		if(!!G[x-1] && (!G[x-1][y] || !!G[x-1][y] && G[x-1][y].player != p)) moves.push('-1+0');
+		if(!G[x][y+1] || !!G[x][y+1] && G[x][y+1].player != p) moves.push('+0+1');
+		if(!G[x][y-1] || !!G[x][y-1] && G[x][y-1].player != p) moves.push('+0-1');
+		if(!!G[x+1] && (!G[x+1][y+1] || !!G[x+1][y+1] && G[x+1][y+1].player != p)) moves.push('+1+1');
+		if(!!G[x-1] && (!G[x-1][y+1] || !!G[x-1][y+1] && G[x-1][y+1].player != p)) moves.push('-1+1');
+		if(!!G[x+1] && (!G[x+1][y-1] || !!G[x+1][y-1] && G[x+1][y-1].player != p)) moves.push('+1-1');
+		if(!!G[x-1] && (!G[x-1][y-1] || !!G[x-1][y-1] && G[x-1][y-1].player != p)) moves.push('-1-1');
+	}
+	console.log(moves)
+	return restrict(moves, x, y);
+}
+
+function restrict(L, y, x){
+	let D = [];
+	L.forEach((d) => {
+		let dx = parseInt(d[3]);
+		if(d[2] == '-') dx = -dx;
+		let dy = parseInt(d[1]);
+		if(d[0] == '-') dy = -dy;
+		if(x+dx >= 0 && x+dx < 8 && y+dy >= 0 && y+dy < 8) D.push([x, y, dx, dy]);
+	});
+	return D;
+}
+
+function move(x, y, dx, dy){
+	grid[x+dx][y+dy] = grid[x][y];
+	grid[x][y] = false;
+	deplacement(y, x, dy*40, dx*40);
+}
+
+var ctx2 = document.getElementById('pieces').getContext('2d');
+var ctx3 = document.getElementById('pieces_prise').getContext('2d');
+ctx3.font ="20px Georgia";
+ctx3.strokeText("Pièces Prises :",0,20);
+ctx3.x = 0;
+ctx3.y = 40;
+function draw(x,y,url){
+	var image = new Image();
+	image.addEventListener('load',function(){
+		var less= image.height;
+		ctx2.drawImage(image,x-32,y-less-4);
+	},false);
+	image.src = url;
+	image.load;
+}
+function undraw(x,y){
+	ctx2.clearRect(x,y,40,40);
+}
+function deplacement(x,y,deltax,deltay){ //deltax et deltay compris entre -8 et 8 pour le déplacement
+	undraw(y*40,x*40);
+	if (grid[x+deltax/40][y+deltay/40]!=false){
+		var image = new Image();
+		image.src = 'Images/pions/'+grid[x+deltax/40][y+deltay/40].type+'_'+grid[x+deltax/40][y+deltay/40].player+'.png'
+		ctx3.drawImage(image,ctx3.x,ctx3.y); //afficher en dessous de l'échiquier la pièce mangée
+	}
+	undraw(y*40+deltay,x*40+deltax);
+	draw(y*40+deltay+40,x*40+deltax+40,'Images/pions/'+grid[x][y].type+'_'+grid[x][y].player+'.png');
+}
+//initialisation du plateau avec toute les pièces
+for(i=1;i<9;i++){
+	for(j=1;j<9;j++){
+		if (grid[i-1][j-1]){
+			draw(j*40,i*40,'Images/pions/'+grid[i-1][j-1].type+'_'+grid[i-1][j-1].player+'.png');
+		}
+	}
+}
+var image = new Image();
+image.src='Images/pions/cheval_2.png';
+        function changement_pion(nouveau){
+          if (nouveau==1) {
+            alert("Vous ne pouvez pas prendre la couleur de l'adversaire !")
+            return 0
+          }
+          for (var i = 0; i <8; i++) {
+             for (var j=0; j <8; j++) {
+               if (grid[i][j].player == 2) {
+                undraw((j+1)*40,(i+1)*40);
+                draw((j+1)*40,(i+1)*40,'Images/pions/'+grid[i][j].type+'_'+nouveau+'.png');
+                grid[i][j].player = nouveau;
+               }
+             }
+           }
+        }

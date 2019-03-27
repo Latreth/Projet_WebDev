@@ -19,7 +19,6 @@
 			</div>
 		</div>
 	</div>
-	<div id="test"></div>
 	<!--https://pascal.developpez.com/telecharger/detail/id/2819/JS-Echecs-->
 	<script type="text/javascript">
 		//faire une fonction qui fait spawn des images de pièces aléatoirement dans le top 
@@ -31,31 +30,24 @@
 			img.id = "spawner";
 			img.style.transform = "rotate(0deg)";
 			img.style.position = "absolute";
-			var pos = Math.floor(Math.random()*(window.innerWidth - img.width)+1)+img.width;
+			var pos = Math.floor(Math.random()*(window.innerWidth -50 - img.width)+1)+img.width;
 			img.style.left = pos + "px";
-			/*var div = document.createElement('div');
-			div.id = "gen";
-			div.style.left = img.style.left;
-			console.log(div.style.left);
-			console.log(img.style.left);*/
-			//div.appendChild(img);
 			document.body.appendChild(img);
 		}
 		//faire une fonction qui détruit les éléments à plus de window.height du top
 		function detruire(){
-			for (var i = 0; i < document.body.childNodes.length; i++) {
-				console.log(document.getElementById("spawner"));
-				var elm = document.getElementById("spawner");
-				if (elm.style.top > 700){
-					document.body.removeChild(elm);
-				}
-			}
+			console.log(document.getElementById("spawner"));
+			var elm = document.getElementById("spawner");
+			document.body.removeChild(elm);
 		}
 		//faire la fonction appelante pour lancer le script au chargement de la page
 		function go(){
-			for (var i = 0; i <15000; i++) {
-				setTimeout(()=>{spawn();detruire();},2000);
-				console.log("je suis la");
+			for (var i = 0; i <50; i++) {
+				setTimeout(()=>{spawn();},i*100);
+				spawn();
+			}
+			for (var i = 0; i <1500; i++) {
+				detruire();
 			}
 		}
 		go();

@@ -1,13 +1,16 @@
-var websocket = require('ws'),
-	ent = require('ent'); // Permet de bloquer les caractères HTML (sécurité équivalente à htmlentities en PHP)
+const websocket = require('ws');
+const ent = require('ent'); // Permet de bloquer les caractères HTML (sécurité équivalente à htmlentities en PHP)
 
 var ws = new websocket.Server({port: 80});
 console.log("RUNNING ON PORT 80");
+
 var client = {};
+var rooms = {};
+var users = {};
+
 ws.on('connection', (socket, req) => {
 	let id = Random.Char(16);
 	client[id] = {};
-	console.log(id);
 	let _client = client[id];
 	_client.socket = socket;
 	_client.ip = req.connection.remoteAddress;
@@ -21,12 +24,35 @@ ws.on('connection', (socket, req) => {
 			let cmd = JSON.parse(data.cmd.substring(clientID.length).trim());
 			let type = cmd.type;
 			if(type == "chat_message"){
-				log(clientID, JSON.stringify({type: "chat_message", pseudo: cmd.pseudo, message: cmd.message}));
+				for(let c in rooms[cmd.room]){
+					if(c != "playercount") log(rooms[cmd.room][c], JSON.stringify({type: "chat_message", pseudo: cmd.pseudo, message: cmd.message}));
+				}
 			}
 			if(type == "action"){
-				log(clientID, JSON.stringify({type: "action", pseudo: cmd.pseudo, message: cmd.message}));
+				for(let c in rooms[cmd.room]){
+					if(c != "playercount") log(rooms[cmd.room][c], JSON.stringify({type: "action", pseudo: cmd.pseudo, message: cmd.message}));
+				}
 			}
 			if(type == "nouveau_joueur"){
+				if(!rooms[cmd.room]) rooms[cmd.room] = {playercount: 0};
+				rooms[cmd.room][cmd.pseudo] = clientID;
+				++rooms[cmd.room].playercount;
+				users[clientID] = [cmd.room, cmd.pseudo];
+				for(let c in rooms[cmd.room]){
+					if(c != "playercount") log(rooms[cmd.room][c], JSON.stringify({type: "nouveau_joueur", pseudo: cmd.pseudo}));
+				}
+				if(rooms[cmd.room].playercount == 1) log(clientID, JSON.stringify({type: "autorisation", player: 1}));
+				if(rooms[cmd.room].playercount == 2) log(clientID, JSON.stringify({type: "autorisation", player: 2}));
+			}
+			if(type == "sortie_joueur"){
+				--rooms[cmd.room].playercount;
+				delete rooms[cmd.room][cmd.pseudo];
+				for(let c in rooms[cmd.room]){
+					if(c != "playercount") log(rooms[cmd.room][c], JSON.stringify({type: "sortie_joueur", pseudo: cmd.pseudo}));
+				}
+			}
+			if(type == "nouveau_salon"){
+				rooms[cmd.room] = {playercount: 0};
 				log(clientID, JSON.stringify({type: "nouveau_joueur", pseudo: cmd.pseudo}));
 			}
 		}
@@ -35,10 +61,20 @@ ws.on('connection', (socket, req) => {
 			return socket.close();
 		}
 	});
-	socket.on('close', () => {
+	socket.on('close', () => {/*
+		if(!!users[client[id]]){
+			let room = users[client[id]][0];
+			let pseudo = users[client[id]][1];
+			--rooms[room].playercount;
+			delete rooms[room][pseudo];
+			for(let c in cmd.room){
+				if(c != "playercount") log(rooms[cmd.room][c], JSON.stringify({type: "sortie_joueur", pseudo: pseudo}));
+			}
+		}*/
 		delete client[id];
 	});
 });
+
 var Random = {
 	Char: function(length){
 		if (length === undefined) length = 1;
@@ -52,6 +88,7 @@ var Random = {
 		return Math.floor(Math.random()*(max - min + 1)) + min;
 	},
 };
+
 function log(id, str){
 	let pack = {};
 	pack.msg = str;
