@@ -7,7 +7,6 @@ var client = {};
 ws.on('connection', (socket, req) => {
 	let id = Random.Char(16);
 	client[id] = {};
-	console.log(id);
 	let _client = client[id];
 	_client.socket = socket;
 	_client.ip = req.connection.remoteAddress;

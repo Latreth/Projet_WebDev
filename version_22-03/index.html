@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang='fr'>
+<head>
+<meta charset="UTF-8">
+<title>Jeu d'Echecs</title>
+<link rel="stylesheet" href="style.css">
+<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+
+</head>
+<body>
+	<canvas id="canvas" height=400 width=400></canvas>
+	<canvas id="pieces" height=400 width=400></canvas>
+	<canvas id="pieces_prise" height=80 width=800></canvas>
+	<script src = "Terrain.js"></script>
+				<div id="volet_clos">
+					<div id="volet">
+						<h1>Salle de Chat</h1>
+						<form action="/" method="post" id="formulaire_chat">
+							<input type="text" name="message" id="message" placeholder="Votre message..." size="50" autofocus />
+							<input type="submit" id="envoi_message" value="Envoyer" />
+						</form>
+						<section id="zone_chat">
+						</section>
+						<a href="#volet" class="ouvrir" aria-hidden="true">Chat</a>
+							<a href="#volet_clos" class="fermer" aria-hidden="true">Réduire</a>
+					</div>
+				</div>
+				<script>
+
+					var pseudo = prompt('Quel est votre pseudo ?');
+					document.title = pseudo + ' - ' + document.title;
+
+					// Connexion au serveur
+					const IP = "192.168.1.33";
+					var ws = new WebSocket('ws://' + IP + ':80');
+
+					var clientID = "";
+					ws.onmessage = (msg) => {
+						let data = JSON.parse(msg.data);
+						data = JSON.parse(data.msg);
+						console.log(data);
+						if(data.type == "_id"){
+							clientID = data.clientID;
+							sendCmd(JSON.stringify({type: "nouveau_joueur", pseudo: pseudo}));
+						}
+						else if(data.type == "chat_message"){
+							insereMessage(data.pseudo, data.message);
+						}
+						else if(data.type == "nouveau_joueur"){
+							$('#zone_chat').prepend('<p><em>' + data.pseudo + ' a rejoint le Chat !</em></p>');
+						}
+					}
+					function sendCmd(str){
+						str = clientID + " " + str;
+						let pack = {};
+						pack.cmd = str;
+						let data = JSON.stringify(pack);
+						ws.send(data);
+					}
+
+					// On demande le pseudo, on l'envoie au serveur et on l'affiche dans le titre
+
+					// Lorsqu'on envoie le formulaire, on transmet le message et on l'affiche sur la page
+					$('#formulaire_chat').submit(function() {
+						var message = $('#message').val();
+						sendCmd(JSON.stringify({type: "chat_message", pseudo: pseudo, message: message})); // Transmet le message aux autres
+						
+						$('#message').val('').focus(); // Vide la zone de Chat et remet le focus dessus
+						return false; // Permet de bloquer l'envoi "classique" du formulaire
+					});
+					// Ajoute un message dans la page
+					function insereMessage(pseudo, message) {
+						$('#zone_chat').prepend('<p><strong>' + pseudo + '</strong> ' + message + '</p>');
+					}
+						
+				</script>
+				<script src='client.js'></script>
+				<script>
+					var ctx2 = document.getElementById('pieces').getContext('2d');
+					var ctx3 = document.getElementById('pieces_prise').getContext('2d');
+					ctx3.font ="20px Georgia";
+					ctx3.strokeText("Pièces Prises :",0,20);
+					ctx3.x = 0;
+					ctx3.y = 40;
+					function draw(x,y,url){
+						var image = new Image();
+						image.addEventListener('load',function(){
+							var less= image.height;
+							ctx2.drawImage(image,x-32,y-less-4);
+						},false);
+						image.src = url;
+						image.load;
+					}
+					function undraw(x,y){
+						ctx2.clearRect(x,y,40,40);
+					}
+					function deplacement(x,y,deltax,deltay){ //deltax et deltay compris entre -8 et 8 pour le déplacement
+						undraw(x,y);
+						if (grid[x+deltax/40][y+deltay/40]!=false){
+							var image = new Image();
+							image.src = 'Images/pions/'+grid[x+deltax/40][y+deltay/40].type+'_'+grid[x+deltax/40][y+deltay/40].player+'.png'
+							ctx3.drawImage(image,ctx3.x,ctx3.y); //afficher en dessous de l'échiquier la pièce mangée
+						}
+						undraw(x+deltax,y+deltay);
+						draw(x+deltax+40,y+deltay+40,'Images/pions/'+grid[x][y].type+'_'+grid[x][y].player+'.png');
+					}
+					//initialisation du plateau avec toute les pièces
+					for(i=1;i<9;i++){
+						for(j=1;j<9;j++){
+							if (grid[i-1][j-1]){
+								draw(j*40,i*40,'Images/pions/'+grid[i-1][j-1].type+'_'+grid[i-1][j-1].player+'.png');
+							}
+						}
+					}
+					var image = new Image();
+					image.src='Images/pions/cheval_2.png';
+				</script>
+</body>
+</html>
