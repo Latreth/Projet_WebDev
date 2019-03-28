@@ -26,9 +26,11 @@
 		function spawn() {
 			var img = document.createElement('img');
 			var piece = Math.floor(Math.random()*6);
+			var pattern = Math.floor(Math.random()*2)+1;
 			img.src = 'Images/pions/'+choix[piece]+'_1.png';
 			img.id = "spawner";
 			img.style.transform = "rotate(0deg)";
+			img.style.animationName= "pattern"+pattern;
 			img.style.position = "absolute";
 			var pos = Math.floor(Math.random()*(window.innerWidth -50 - img.width)+1)+img.width;
 			img.style.left = pos + "px";
@@ -36,7 +38,6 @@
 		}
 		//faire une fonction qui détruit les éléments à plus de window.height du top
 		function detruire(){
-			console.log(document.getElementById("spawner"));
 			var elm = document.getElementById("spawner");
 			document.body.removeChild(elm);
 		}

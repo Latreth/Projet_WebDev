@@ -30,7 +30,6 @@
 
 #spawner{
 	position: relative;
-  	animation-name: try;
   	animation-duration: 2s;
   	animation-timing-function: linear;
   	animation-iteration-count: infinite;
@@ -42,9 +41,16 @@ body {
 }
 
 
-	@keyframes try {
-  		0%   {top:0px;transform:rotate(0deg);}
-  		40% {top:300px;transform:rotate(50deg);}
-  		80%  {top:600px;transform:rotate(-50deg);}
-  		100% {top:710px;transform: rotate(0deg);}
-	}
+@keyframes pattern1 {
+  	0%   {top:0px;transform:rotate(0deg);}
+  	40% {top:300px;transform:rotate(50deg);}
+  	80%  {top:600px;transform:rotate(-50deg);}
+  	100% {top:710px;transform: rotate(0deg);}
+}
+
+@keyframes pattern2 {
+  	0%   {top:0px;transform:rotate(0deg);}
+  	40% {top:300px;transform:rotate(-50deg);}
+  	80%  {top:600px;transform:rotate(50deg);}
+  	100% {top:710px;transform: rotate(0deg);}
+}
