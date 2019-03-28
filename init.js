@@ -157,14 +157,14 @@ function select(x, y){
 		}
 	}
 	if(type == 'cheval'){
-		if (x+1<8&&y+2<8) {if(!!G[x+1] && (!G[x+1][y+2] || !!G[x+1][y+2] && G[x+1][y+2].player != p)) moves.push('+1+2');}
-		if (y-2 >=0&&x+1<8) {if(!!G[x+1] && (!G[x+1][y-2] || !!G[x+1][y-2] && G[x+1][y-2].player != p)) moves.push('+1-2');}
-		if (x-1 >= 0&&y+2<8) {if(!!G[x-1] && (!G[x-1][y+2] || !!G[x-1][y+2] && G[x-1][y+2].player != p)) moves.push('-1+2');}
-		if (y-2 >= 0 && x-1>=0) {if(!!G[x-1] && (!G[x-1][y-2] || !!G[x-1][y-2] && G[x-1][y-2].player != p)) moves.push('-1-2');}
-		if (x+2<8 && y+1<8) {if(!!G[x+2] && (!G[x+2][y+1] || !!G[x+2][y+1] && G[x+2][y+1].player != p)) moves.push('+2+1');}
-		if (x-2 >=0 && y+1<8){if(!!G[x-2] && (!G[x-2][y+1] || !!G[x-2][y+1] && G[x-2][y+1].player != p)) moves.push('-2+1');}
-		if (y-1>=0 && x+2<8){if(!!G[x+2] && (!G[x+2][y-1] || !!G[x+2][y-1] && G[x+2][y-1].player != p)) moves.push('+2-1');}
-		if (x-2>=0 && y-1>=0) {if(!!G[x-2] && (!G[x-2][y-1] || !!G[x-2][y-1] && G[x-2][y-1].player != p)) moves.push('-2-1');}
+		if (x+1<8&&y+2<8) {if(!!G[x+1] && (!G[x+1][y+2] || !!G[x+1][y+2] && G[x+1][y+2].player != p)) moves.push('+2+1');}
+		if (y-2 >=0&&x+1<8) {if(!!G[x+1] && (!G[x+1][y-2] || !!G[x+1][y-2] && G[x+1][y-2].player != p)) moves.push('-2+1');}
+		if (x-1 >= 0&&y+2<8) {if(!!G[x-1] && (!G[x-1][y+2] || !!G[x-1][y+2] && G[x-1][y+2].player != p)) moves.push('+2-1');}
+		if (y-2 >= 0 && x-1>=0) {if(!!G[x-1] && (!G[x-1][y-2] || !!G[x-1][y-2] && G[x-1][y-2].player != p)) moves.push('-2-1');}
+		if (x+2<8 && y+1<8) {if(!!G[x+2] && (!G[x+2][y+1] || !!G[x+2][y+1] && G[x+2][y+1].player != p)) moves.push('+1+2');}
+		if (x-2 >=0 && y+1<8){if(!!G[x-2] && (!G[x-2][y+1] || !!G[x-2][y+1] && G[x-2][y+1].player != p)) moves.push('+1-2');}
+		if (y-1>=0 && x+2<8){if(!!G[x+2] && (!G[x+2][y-1] || !!G[x+2][y-1] && G[x+2][y-1].player != p)) moves.push('-1+2');}
+		if (x-2>=0 && y-1>=0) {if(!!G[x-2] && (!G[x-2][y-1] || !!G[x-2][y-1] && G[x-2][y-1].player != p)) moves.push('-1-2');} //J'ai intervertit tous les couples
 	}
 	if(type == "roi"){
 		if(!!G[x+1] && (!G[x+1][y] || !!G[x+1][y] && G[x+1][y].player != p)) moves.push('+1+0');
@@ -176,7 +176,6 @@ function select(x, y){
 		if(!!G[x+1] && (!G[x+1][y-1] || !!G[x+1][y-1] && G[x+1][y-1].player != p)) moves.push('+1-1');
 		if(!!G[x-1] && (!G[x-1][y-1] || !!G[x-1][y-1] && G[x-1][y-1].player != p)) moves.push('-1-1');
 	}
-	console.log(moves)
 	return restrict(moves, x, y);
 }
 
@@ -187,15 +186,21 @@ function restrict(L, x, y){
 		if(d[2] == '-') dx = -dx;
 		let dy = parseInt(d[1]);
 		if(d[0] == '-') dy = -dy;
-		if(x+dx >= 0 && x+dx < 8 && y+dy >= 0 && y+dy < 8) D.push([x, y, dx, dy]);
+		D.push([x, y, dx, dy]);
 	});
 	return D;
 }
 
 function move(x, y, dx, dy){
+	console.log(x);
+	console.log(dx);
+	console.log(x+dx);
 	grid[x+dx][y+dy] = grid[x][y];
+	console.log(grid[x][y]);
+	console.log(grid[x+dx][y+dy]);
 	grid[x][y] = false;
-	deplacement(y, x, dy*40, dx*40);
+	deplacement(x, y, dx*40, dy*40);
+	console.log(grid);
 }
 
 var ctx2 = document.getElementById('pieces').getContext('2d');

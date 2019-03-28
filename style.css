@@ -105,8 +105,10 @@
 	cursor: pointer;
 }
 .tile:hover{
-	background-color: #ed500099;
+	background-color: #ed500099; 
 }
+/*Pk pert-on la propriété hover apres la fonction deselctTiles ??*/
+/*Solution : https://openclassrooms.com/forum/sujet/hover-et-javascript-19196*/
 .tile:active{
 	background-color: #ede60099;
 }

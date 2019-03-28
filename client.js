@@ -1,5 +1,8 @@
 
 var pseudo = /*localStorage.pseudo ||*/prompt('Quel est votre pseudo ?');
+var ar = new Array();
+var gi = 0 ;
+var gj = 0;
 localStorage.pseudo = pseudo;
 document.title = pseudo + ' - ' + document.title;
 
@@ -33,7 +36,7 @@ ws.onmessage = (msg) => {
 		for(let i = 1; i <= 8; ++i){
 			$('#tiles').append('<div id = "line_' + i + '"></div>');
 			for(let j = 1; j <= 8; ++j){
-				$('#line_' + i).append('<div class = "tile" id = "tile_' + i + '_' + j + '" onclick = "selectTile(' + i + ', ' + j + ');"></div>');
+				$('#line_' + i).append('<div class = "tile" id = "tile_' + i + '_' + j + '" onclick = "verif_mouv(' + i + ', ' + j + ');deselectTile(' + i + ', ' + j + ');selectTile(' + i + ', ' + j + ');"></div>');
 			}
 		}
 	}
@@ -63,6 +66,40 @@ window.addEventListener('beforeunload', () => {
 	sendCmd(JSON.stringify({type: "sortie_joueur", pseudo: pseudo, room: roomID}));
 });
 
+
 function selectTile(i, j){
-	console.log(select(j-1, i-1));
+	if (grid[j-1][i-1]!=false) {
+		ar = select(j-1,i-1);
+		gi = i;
+		gj = j;
+		for (var l = 0; l < ar.length; l++) {
+			var x = ar[l][0];
+			var y = ar[l][1];
+			var dx = ar[l][2];
+			var dy = ar[l][3];
+			var a = x+dx+1;
+			var b = y+dy+1;
+			document.getElementById("tile_" + b + '_' + a ).style.backgroundColor = "#ede60099";
+		}
+	}
+}
+
+function deselectTile(i,j) {
+	for (var l = 0; l < ar.length; l++) {
+		var x = ar[l][0];
+		var y = ar[l][1];
+		var dx = ar[l][2];
+		var dy = ar[l][3];
+		var a = x+dx+1;
+		var b = y+dy+1;
+		document.getElementById("tile_" + b + '_' + a ).style.backgroundColor = "#fff0";
+	}
+}
+
+function verif_mouv(i,j) {
+	if (document.getElementById("tile_" + i + '_' + j ).style.backgroundColor=="rgba(237, 230, 0, 0.6)") {
+		move(gj-1,gi-1,j-gj,i-gi);
+		return true;
+	}
+	return false;
 }
