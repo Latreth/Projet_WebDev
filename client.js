@@ -70,6 +70,7 @@ window.addEventListener('beforeunload', () => {
 function selectTile(i, j){
 	if (grid[j-1][i-1]!=false) {
 		ar = select(j-1,i-1);
+		console.log(ar);
 		gi = i;
 		gj = j;
 		for (var l = 0; l < ar.length; l++) {
@@ -79,6 +80,7 @@ function selectTile(i, j){
 			var dy = ar[l][3];
 			var a = x+dx+1;
 			var b = y+dy+1;
+			console.log(a,b);
 			document.getElementById("tile_" + b + '_' + a ).style.backgroundColor = "#ede60099";
 		}
 	}

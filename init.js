@@ -1,4 +1,46 @@
-var grid = initGrille();
+//var grid = initGrille();
+
+var grid = new Array();
+grid = [[
+			{type: 'tour', player: 1},
+			{type: 'cheval', player: 1},
+			{type: 'fou', player: 1},
+			{type: 'reine', player: 1},
+			{type: 'roi', player: 1},
+			{type: 'fou', player: 1},
+			{type: 'cheval', player: 1},
+			{type: 'tour', player: 1}
+		],[
+			{type: 'pion', player: 1},
+			{type: 'pion', player: 1},
+			{type: 'pion', player: 1},
+			{type: 'pion', player: 1},
+			{type: 'pion', player: 1},
+			{type: 'pion', player: 1},
+			{type: 'pion', player: 1},
+			{type: 'pion', player: 1}
+		],[false,false,false,false,false,false,false,false],[false,false,false,false,false,false,false,false],[false,false,false,false,false,false,false,false],[false,false,false,false,false,false,false,false],
+		[
+			{type: 'pion', player: 2},
+			{type: 'pion', player: 2},
+			{type: 'pion', player: 2},
+			{type: 'pion', player: 2},
+			{type: 'pion', player: 2},
+			{type: 'pion', player: 2},
+			{type: 'pion', player: 2},
+			{type: 'pion', player: 2}
+		],[
+			{type: 'tour', player: 2},
+			{type: 'cheval', player: 2},
+			{type: 'fou', player: 2},
+			{type: 'reine', player: 2},
+			{type: 'roi', player: 2},
+			{type: 'fou', player: 2},
+			{type: 'cheval', player: 2},
+			{type: 'tour', player: 2}
+		]]
+
+
 
 function initGrille(){
 	function initLigne(k, p){
@@ -59,10 +101,10 @@ function select(x, y){
 			if (x-1 >0){if(!G[x-1][y]) moves.push('+0-1');}
 			if(x == 6 && !G[x-2][y]) moves.push('+0-2'); 
 		}
-		if (x+1 <8 && y+1 <8) {if(!!G[x+1] && !!G[x+1][y+1] && G[x+1][y+1].player != p) moves.push('+1+1');}
-		if (x-1>=0 && y+1 <8) {if(!!G[x-1] && !!G[x-1][y+1] && G[x-1][y+1].player != p) moves.push('-1+1');}
-		if (x+1 <8 && y-1 >=0) {if(!!G[x+1] && !!G[x+1][y-1] && G[x+1][y-1].player != p) moves.push('+1-1');}
-		if (x-1 >=0 && y-1 >=0) {if(!!G[x-1] && !!G[x-1][y-1] && G[x-1][y-1].player != p) moves.push('-1-1');}
+		if (x+1 <8 && y+1 <8) {if(!!G[x+1] && !!G[x+1][y+1] && G[x+1][y+1].player != 1 && G[x+1][y+1].player != p) moves.push('+1+1');}
+		if (x-1>=0 && y+1 <8) {if(!!G[x-1] && !!G[x-1][y+1] && G[x-1][y+1].player != 2 && G[x-1][y+1].player != p) moves.push('+1-1');}
+		if (x+1 <8 && y-1 >=0) {if(!!G[x+1] && !!G[x+1][y-1] && G[x+1][y-1].player != 1 && G[x+1][y-1].player != p) moves.push('-1+1');}
+		if (x-1 >=0 && y-1 >=0) {if(!!G[x-1] && !!G[x-1][y-1] && G[x-1][y-1].player != 2 && G[x-1][y-1].player != p) moves.push('-1-1');}
 	}
 	if(type == 'tour' || type == "reine"){
 		for(let i = 1; i <= 8; ++i){
@@ -124,23 +166,23 @@ function select(x, y){
 		}
 		for(let i = 1; i <= 8; ++i){
 			if (x-i<0 || y+i >7) break;
-			if(!!G[x-i] && !G[x-i][y+i]) moves.push('-' + i + '+' + i);
+			if(!!G[x-i] && !G[x-i][y+i]) moves.push('+' + i + '-' + i);
 			if(!!G[x-i] && !!G[x-i][y+i] && G[x-i][y+i].player == p){
 				break;
 			}
 			if(!!G[x-i] && !!G[x-i][y+i] && G[x-i][y+i].player != p){
-				moves.push('-' + i + '+' + i);
+				moves.push('+' + i + '-' + i);
 				break;
 			}
 		}
 		for(let i = 1; i <= 8; ++i){
 			if (x+i >7 || y-i < 0 ) break;
-			if(!!G[x+i] && !G[x+i][y-i]) moves.push('+' + i + '-' + i);
+			if(!!G[x+i] && !G[x+i][y-i]) moves.push('-' + i + '+' + i);
 			if(!!G[x+i] && !!G[x+i][y-i] && G[x+i][y-i].player == p){
 				break;
 			}
 			if(!!G[x+i] && !!G[x+i][y-i] && G[x+i][y-i].player != p){
-				moves.push('+' + i + '-' + i);
+				moves.push('-' + i + '+' + i);
 				break;
 			}
 		}
@@ -167,13 +209,13 @@ function select(x, y){
 		if (x-2>=0 && y-1>=0) {if(!!G[x-2] && (!G[x-2][y-1] || !!G[x-2][y-1] && G[x-2][y-1].player != p)) moves.push('-1-2');} //J'ai intervertit tous les couples
 	}
 	if(type == "roi"){
-		if(!!G[x+1] && (!G[x+1][y] || !!G[x+1][y] && G[x+1][y].player != p)) moves.push('+1+0');
-		if(!!G[x-1] && (!G[x-1][y] || !!G[x-1][y] && G[x-1][y].player != p)) moves.push('-1+0');
-		if(!G[x][y+1] || !!G[x][y+1] && G[x][y+1].player != p) moves.push('+0+1');
-		if(!G[x][y-1] || !!G[x][y-1] && G[x][y-1].player != p) moves.push('+0-1');
+		if(!!G[x+1] && (!G[x+1][y] || !!G[x+1][y] && G[x+1][y].player != p)) moves.push('+0+1');
+		if(!!G[x-1] && (!G[x-1][y] || !!G[x-1][y] && G[x-1][y].player != p)) moves.push('+0-1');
+		if(!G[x][y+1] || !!G[x][y+1] && G[x][y+1].player != p) moves.push('+1+0');
+		if(!G[x][y-1] || !!G[x][y-1] && G[x][y-1].player != p) moves.push('-1+0');
 		if(!!G[x+1] && (!G[x+1][y+1] || !!G[x+1][y+1] && G[x+1][y+1].player != p)) moves.push('+1+1');
-		if(!!G[x-1] && (!G[x-1][y+1] || !!G[x-1][y+1] && G[x-1][y+1].player != p)) moves.push('-1+1');
-		if(!!G[x+1] && (!G[x+1][y-1] || !!G[x+1][y-1] && G[x+1][y-1].player != p)) moves.push('+1-1');
+		if(!!G[x-1] && (!G[x-1][y+1] || !!G[x-1][y+1] && G[x-1][y+1].player != p)) moves.push('+1-1');
+		if(!!G[x+1] && (!G[x+1][y-1] || !!G[x+1][y-1] && G[x+1][y-1].player != p)) moves.push('-1+1');
 		if(!!G[x-1] && (!G[x-1][y-1] || !!G[x-1][y-1] && G[x-1][y-1].player != p)) moves.push('-1-1');
 	}
 	return restrict(moves, x, y);
@@ -192,15 +234,19 @@ function restrict(L, x, y){
 }
 
 function move(x, y, dx, dy){
-	console.log(x);
+	/*console.log(x);
 	console.log(dx);
-	console.log(x+dx);
-	grid[x+dx][y+dy] = grid[x][y];
-	console.log(grid[x][y]);
-	console.log(grid[x+dx][y+dy]);
-	grid[x][y] = false;
+	console.log(x+dx);*/
+	var a = y+dy;
+	var b = x+dx;
 	deplacement(x, y, dx*40, dy*40);
-	console.log(grid);
+	grid[b].splice(a,1,grid[x][y]);
+	//grid[x+dx][y+dy]={type:' ',player:0};
+	//grid[b][a] = grid[x][y];
+	/*for (var i = 0; i <8; i++) {
+		
+	}*/
+	grid[x][y] = false;
 }
 
 var ctx2 = document.getElementById('pieces').getContext('2d');
@@ -227,6 +273,7 @@ function deplacement(x,y,deltax,deltay){ //deltax et deltay compris entre -8 et 
 		var image = new Image();
 		image.src = 'Images/pions/'+grid[x+deltax/40][y+deltay/40].type+'_'+grid[x+deltax/40][y+deltay/40].player+'.png'
 		ctx3.drawImage(image,ctx3.x,ctx3.y); //afficher en dessous de l'échiquier la pièce mangée
+		ctx3.x +=40;
 	}
 	undraw(y*40+deltay,x*40+deltax);
 	draw(y*40+deltay+40,x*40+deltax+40,'Images/pions/'+grid[x][y].type+'_'+grid[x][y].player+'.png');
@@ -256,3 +303,15 @@ function changement_pion(nouveau){
         }
     }
 }
+
+//Reste à faire :
+//Le roc
+//Empecher un pion de sauter une pièce adverse au départ de ce dernier
+//Interaction serveur pour la partie en cours (après chaque mouvement effectuer attente + deplacement)
+//Faire un timer pour les parties blitz
+//La promotion de pion doit être implémentée
+//Interaction interface lors d'un échec
+//Interaction interface lors d'un échec et mat
+//Récapitulatif des coups qui ont été joué durant la partie
+//IA si le temps le permet
+//Finir la coloration des pièces (pour le moment 1 seul changement autorisé)
