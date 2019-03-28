@@ -318,3 +318,4 @@ function changement_pion(nouveau){
 //interdire aux rois d'être à moins d'une case d'écart
 //empècher de bouger autre chose après une mise en échecs.
 //Implémenter la prise de pion 'en passant'
+//Changer l'ensemble des couleurs proprement

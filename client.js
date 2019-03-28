@@ -4,6 +4,8 @@ var ar = new Array();
 var mine = 2;
 var gi = 0 ;
 var gj = 0;
+var pi=0;
+var pj=0;
 localStorage.pseudo = pseudo;
 document.title = pseudo + ' - ' + document.title;
 
@@ -38,7 +40,7 @@ ws.onmessage = (msg) => {
 		for(let i = 1; i <= 8; ++i){
 			$('#tiles').append('<div id = "line_' + i + '"></div>');
 			for(let j = 1; j <= 8; ++j){
-				$('#line_' + i).append('<div class = "tile" id = "tile_' + i + '_' + j + '" onclick = "if (verif_mouv(' + i + ', ' + j + ')){echecs(' + i + ', ' + j + ');deselectTile(' + i + ', ' + j + ');}else{deselectTile(' + i + ', ' + j + ');selectTile(' + i + ', ' + j + ');}"></div>');
+				$('#line_' + i).append('<div class = "tile" id = "tile_' + i + '_' + j + '" onclick = "if (verif_mouv(' + i + ', ' + j + ')){echecs(' + i + ', ' + j + ');promotion(' + i + ', ' + j + ');deselectTile(' + i + ', ' + j + ');}else{deselectTile(' + i + ', ' + j + ');selectTile(' + i + ', ' + j + ');}"></div>');
 			}
 		}
 	}
@@ -124,4 +126,45 @@ function echecs(i,j){
 			alert('Vous êtes en échec'); // Le faire afficher sur le bon joueur
 		}
 	}
+}
+
+function promotion(i,j){ //Pour faire une promotion de pion si un pion touche la ligne de 0 ou 7
+	if (j==8 && grid[j-1][i-1].type == 'pion') {
+		document.getElementById('promotion').style.visibility = 'visible';
+		pi=i;
+		pj=j;
+	}
+	if(j==1 && grid[j-1][i-1].type == 'pion'){
+		document.getElementById('promotion').style.visibility = 'visible';
+		pi=i;
+		pj=j;
+	}
+}
+
+function achanger_tour(){
+	document.getElementById('promotion').style.visibility = 'hidden';
+	grid[pj-1][pi-1] = {type : "tour", player:2};
+	undraw((pi-1)*40,(pj-1)*40);
+    draw((pi)*40,(pj)*40,'Images/pions/tour_2.png');
+}
+
+function achanger_fou(){
+	document.getElementById('promotion').style.visibility = 'hidden';
+	grid[pj-1][pi-1] = {type : "fou", player:2};
+	undraw((pi-1)*40,(pj-1)*40);
+    draw((pi)*40,(pj)*40,'Images/pions/fou_2.png');
+}
+
+function achanger_cheval(){
+	document.getElementById('promotion').style.visibility = 'hidden';
+	grid[pj-1][pi-1] = {type : "cheval", player:2};
+	undraw((pi-1)*40,(pj-1)*40);
+    draw((pi)*40,(pj)*40,'Images/pions/cheval_2.png');
+}
+
+function achanger_reine(){
+	document.getElementById('promotion').style.visibility = 'hidden';
+	grid[pj-1][pi-1] = {type : "reine", player:2};
+	undraw((pi-1)*40,(pj-1)*40);
+    draw((pi)*40,(pj)*40,'Images/pions/reine_2.png');
 }

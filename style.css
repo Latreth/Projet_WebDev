@@ -112,3 +112,12 @@
 .tile:active{
 	background-color: #ede60099;
 }
+
+#promotion{
+	position: absolute;
+	top:10%;
+	left:50%;
+	transform: translate(-50%,-50%);
+	text-align: center;
+	visibility: hidden;
+}
