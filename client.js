@@ -1,6 +1,7 @@
 
 var pseudo = /*localStorage.pseudo ||*/prompt('Quel est votre pseudo ?');
 var ar = new Array();
+var mine = 2;
 var gi = 0 ;
 var gj = 0;
 localStorage.pseudo = pseudo;
@@ -25,6 +26,7 @@ ws.onmessage = (msg) => {
 		insereMessage(data.pseudo, data.message);
 	}
 	else if(data.type == "nouveau_joueur"){
+		mine = 2;
 		$('#zone_chat').append('<p><em>' + data.pseudo + ' a rejoint la partie</em></p>');
 	}
 	else if(data.type == "sortie_joueur"){
@@ -36,7 +38,7 @@ ws.onmessage = (msg) => {
 		for(let i = 1; i <= 8; ++i){
 			$('#tiles').append('<div id = "line_' + i + '"></div>');
 			for(let j = 1; j <= 8; ++j){
-				$('#line_' + i).append('<div class = "tile" id = "tile_' + i + '_' + j + '" onclick = "verif_mouv(' + i + ', ' + j + ');deselectTile(' + i + ', ' + j + ');selectTile(' + i + ', ' + j + ');"></div>');
+				$('#line_' + i).append('<div class = "tile" id = "tile_' + i + '_' + j + '" onclick = "if (verif_mouv(' + i + ', ' + j + ')){echecs(' + i + ', ' + j + ');deselectTile(' + i + ', ' + j + ');}else{deselectTile(' + i + ', ' + j + ');selectTile(' + i + ', ' + j + ');}"></div>');
 			}
 		}
 	}
@@ -80,9 +82,11 @@ function selectTile(i, j){
 			var dy = ar[l][3];
 			var a = x+dx+1;
 			var b = y+dy+1;
-			console.log(a,b);
 			document.getElementById("tile_" + b + '_' + a ).style.backgroundColor = "#ede60099";
 		}
+	}
+	else {
+		console.log(i,j);
 	}
 }
 
@@ -104,4 +108,20 @@ function verif_mouv(i,j) {
 		return true;
 	}
 	return false;
+}
+
+function echecs(i,j){
+	var ar = select(j-1,i-1);
+	for (var l = 0; l < ar.length; l++) {
+		var x = ar[l][0];
+		var y = ar[l][1];
+		var dx = ar[l][2];
+		var dy = ar[l][3];
+		var a = x+dx+1;
+		var b = y+dy+1;
+		console.log(b,a);
+		if (grid[a-1][b-1].type == 'roi' && grid[j-1][i-1].type != 'pion' && grid[a-1][b-1].player == 1){
+			alert('Vous êtes en échec'); // Le faire afficher sur le bon joueur
+		}
+	}
 }

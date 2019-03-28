@@ -42,8 +42,7 @@ grid = [[
 
 
 
-function initGrille(){
-	function initLigne(k, p){
+/*	function initLigne(k, p){
 		if(k == 1) return [
 			{type: 'pion', player: p},
 			{type: 'pion', player: p},
@@ -84,7 +83,7 @@ function initGrille(){
 	G[0][3].type = 'roi';
 	G[0][4].type = 'reine';
 	return G;
-}
+}*/
 
 function select(x, y){
 	let G = grid;
@@ -95,11 +94,11 @@ function select(x, y){
 	if(type == 'pion'){
 		if(p == 1){
 			if (x+1 <8){if(!G[x+1][y]) moves.push('+0+1');}
-			if(x == 1 && !G[x+2][y]) moves.push('+0+2'); 
+			if(x == 1 && !G[x+2][y] && !G[x+1][y]) moves.push('+0+2'); 
 		}
 		else{
 			if (x-1 >0){if(!G[x-1][y]) moves.push('+0-1');}
-			if(x == 6 && !G[x-2][y]) moves.push('+0-2'); 
+			if(x == 6 && !G[x-2][y] && ! G[x-1][y]) moves.push('+0-2'); 
 		}
 		if (x+1 <8 && y+1 <8) {if(!!G[x+1] && !!G[x+1][y+1] && G[x+1][y+1].player != 1 && G[x+1][y+1].player != p) moves.push('+1+1');}
 		if (x-1>=0 && y+1 <8) {if(!!G[x-1] && !!G[x-1][y+1] && G[x-1][y+1].player != 2 && G[x-1][y+1].player != p) moves.push('+1-1');}
@@ -208,7 +207,7 @@ function select(x, y){
 		if (y-1>=0 && x+2<8){if(!!G[x+2] && (!G[x+2][y-1] || !!G[x+2][y-1] && G[x+2][y-1].player != p)) moves.push('-1+2');}
 		if (x-2>=0 && y-1>=0) {if(!!G[x-2] && (!G[x-2][y-1] || !!G[x-2][y-1] && G[x-2][y-1].player != p)) moves.push('-1-2');} //J'ai intervertit tous les couples
 	}
-	if(type == "roi"){
+	if(type == "roi"){//rejouter la contrainte de déplacement vis à vis du roi adverse
 		if(!!G[x+1] && (!G[x+1][y] || !!G[x+1][y] && G[x+1][y].player != p)) moves.push('+0+1');
 		if(!!G[x-1] && (!G[x-1][y] || !!G[x-1][y] && G[x-1][y].player != p)) moves.push('+0-1');
 		if(!G[x][y+1] || !!G[x][y+1] && G[x][y+1].player != p) moves.push('+1+0');
@@ -295,23 +294,27 @@ function changement_pion(nouveau){
 	}
     for (var i = 0; i <8; i++) {
         for (var j=0; j <8; j++) {
-            if (grid[i][j].player == 2) {
+            if (grid[i][j].player == mine) {
                 undraw((j+1)*40,(i+1)*40);
                 draw((j+1)*40,(i+1)*40,'Images/pions/'+grid[i][j].type+'_'+nouveau+'.png');
                 grid[i][j].player = nouveau;
             }
         }
     }
+    mine = nouveau;
 }
 
 //Reste à faire :
 //Le roc
-//Empecher un pion de sauter une pièce adverse au départ de ce dernier
 //Interaction serveur pour la partie en cours (après chaque mouvement effectuer attente + deplacement)
 //Faire un timer pour les parties blitz
 //La promotion de pion doit être implémentée
-//Interaction interface lors d'un échec
+//Envoyer les messages d'apparition d'échec aux bonnes personnes
 //Interaction interface lors d'un échec et mat
 //Récapitulatif des coups qui ont été joué durant la partie
 //IA si le temps le permet
 //Finir la coloration des pièces (pour le moment 1 seul changement autorisé)
+//interdire au roi un déplacement qui entraine une position d'échec
+//interdire aux rois d'être à moins d'une case d'écart
+//empècher de bouger autre chose après une mise en échecs.
+//Implémenter la prise de pion 'en passant'
