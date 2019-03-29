@@ -55,6 +55,9 @@ ws.on('connection', (socket, req) => {
 				rooms[cmd.room] = {playercount: 0};
 				log(clientID, JSON.stringify({type: "nouveau_joueur", pseudo: cmd.pseudo}));
 			}
+			/*if(type == "nouveau_ID"){
+				log(clientID,JSON.stringify({type: "ennemi_ID", cid: cmd.cid}));
+			}*/
 		}
 		catch(e){
 			console.log(e);

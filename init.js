@@ -285,37 +285,19 @@ for(i=1;i<9;i++){
 		}
 	}
 }
-//var image = new Image();
-//image.src='Images/pions/cheval_2.png';
-function changement_pion(nouveau){
-	if (nouveau==1) {
-		alert("Vous ne pouvez pas prendre la couleur de l'adversaire !")
-		return 0
-	}
-    for (var i = 0; i <8; i++) {
-        for (var j=0; j <8; j++) {
-            if (grid[i][j].player == mine) {
-                undraw((j+1)*40,(i+1)*40);
-                draw((j+1)*40,(i+1)*40,'Images/pions/'+grid[i][j].type+'_'+nouveau+'.png');
-                grid[i][j].player = nouveau;
-            }
-        }
-    }
-    mine = nouveau;
-}
+
 
 //Reste à faire :
 //Le roc
 //Interaction serveur pour la partie en cours (après chaque mouvement effectuer attente + deplacement)
 //Faire un timer pour les parties blitz
-//La promotion de pion doit être implémentée
+//Je pense : besoin d'implementer une variable de tour (les paires pour un joueur, les impairs pour l'autre) 
+//afin de les empecher de jouer en même temps. 
 //Envoyer les messages d'apparition d'échec aux bonnes personnes
 //Interaction interface lors d'un échec et mat
-//Récapitulatif des coups qui ont été joué durant la partie
 //IA si le temps le permet
-//Finir la coloration des pièces (pour le moment 1 seul changement autorisé)
 //interdire au roi un déplacement qui entraine une position d'échec
 //interdire aux rois d'être à moins d'une case d'écart
 //empècher de bouger autre chose après une mise en échecs.
 //Implémenter la prise de pion 'en passant'
-//Changer l'ensemble des couleurs proprement
+//créer un id_joueur affecter au départ, qui donne le side et la couleur du joueur.

@@ -1,6 +1,8 @@
 
 var pseudo = /*localStorage.pseudo ||*/prompt('Quel est votre pseudo ?');
 var ar = new Array();
+var lettre = {1:'a',2:'b',3:'c',4:'d',5:'e',6:'f',7:'g',8:'h'};
+var tour = 1;
 var mine = 2;
 var gi = 0 ;
 var gj = 0;
@@ -15,7 +17,8 @@ var ws = new WebSocket('ws://' + IP + ':80');
 
 var clientID = "";
 var playerID;
-var roomID = 1;
+var ennemiID;
+var roomID = 2;
 ws.onmessage = (msg) => {
 	let data = JSON.parse(msg.data);
 	data = JSON.parse(data.msg);
@@ -28,7 +31,6 @@ ws.onmessage = (msg) => {
 		insereMessage(data.pseudo, data.message);
 	}
 	else if(data.type == "nouveau_joueur"){
-		mine = 2;
 		$('#zone_chat').append('<p><em>' + data.pseudo + ' a rejoint la partie</em></p>');
 	}
 	else if(data.type == "sortie_joueur"){
@@ -44,6 +46,9 @@ ws.onmessage = (msg) => {
 			}
 		}
 	}
+	/*else if(data.type == "ennemi_ID"){
+		ennemiID = data.cid;
+	}*/
 }
 
 function sendCmd(str){
@@ -106,7 +111,28 @@ function deselectTile(i,j) {
 
 function verif_mouv(i,j) {
 	if (document.getElementById("tile_" + i + '_' + j ).style.backgroundColor=="rgba(237, 230, 0, 0.6)") {
-		move(gj-1,gi-1,j-gj,i-gi);
+		if (grid[j-1][i-1]) {
+			if (grid[gj-1][gi-1].type != 'pion') {
+				document.getElementById('zonetext').textContent += " " + grid[gj-1][gi-1].type[0].toUpperCase() + "x" + lettre[i]+j;
+				move(gj-1,gi-1,j-gj,i-gi);
+			}
+			else {
+				document.getElementById('zonetext').textContent += " x" + lettre[i]+j;
+				move(gj-1,gi-1,j-gj,i-gi);				
+			}
+		}
+		else {
+			if (grid[gj-1][gi-1].type != 'pion') {
+				document.getElementById('zonetext').textContent += " " + grid[gj-1][gi-1].type[0].toUpperCase() + lettre[i]+j;
+				move(gj-1,gi-1,j-gj,i-gi);
+			}
+			else {
+				document.getElementById('zonetext').textContent += " " + lettre[i]+j;
+				move(gj-1,gi-1,j-gj,i-gi);				
+			}
+		}
+		tour+=1;
+		document.getElementById('zonetext').textContent+=" "+tour+".";
 		return true;
 	}
 	return false;
@@ -167,4 +193,46 @@ function achanger_reine(){
 	grid[pj-1][pi-1] = {type : "reine", player:2};
 	undraw((pi-1)*40,(pj-1)*40);
     draw((pi)*40,(pj)*40,'Images/pions/reine_2.png');
+}
+
+
+
+function changement_pion(nouveau){
+	if (nouveau==ennemiID) {
+		alert("Vous ne pouvez pas prendre la couleur de l'adversaire !")
+		return 0
+	}
+    for (var i = 0; i <8; i++) {
+        for (var j=0; j <8; j++) {
+            if (grid[i][j].player == playerID) {
+                undraw((j+1)*40,(i+1)*40);
+                draw((j+1)*40,(i+1)*40,'Images/pions/'+grid[i][j].type+'_'+nouveau+'.png');
+                grid[i][j].player = nouveau;
+            }
+        }
+    }
+    document.getElementById('promotion').removeChild(document.getElementById('childrens'));
+    var div = document.createElement("div");
+    var img1 = document.createElement("img");
+    img1.src = "Images/pions/cheval_"+nouveau+".png";
+    img1.onclick = "achanger_cheval();";
+    var img2 = document.createElement("img");
+    img2.src = "Images/pions/tour_"+nouveau+".png";
+    img2.onclick = "achanger_tour();";
+    var img3 = document.createElement("img");
+    img3.src = "Images/pions/reine_"+nouveau+".png";
+    img3.onclick = "achanger_reine();";
+    var img4 = document.createElement("img");
+    img4.src = "Images/pions/fou_"+nouveau+".png";
+    img4.onclick = "achanger_fou();";
+    div.appendChild(img1);
+    div.appendChild(img2);
+    div.appendChild(img3);
+    div.id = 'childrens';
+    div.appendChild(img4);
+    document.getElementById('promotion').appendChild(div);
+    console.log(document.getElementById('promotion')); 
+    playerID = nouveau; //Il faut maintenant le propager
+    //sendCmd(JSON.stringify({type: "nouveau_ID", cid : playerID}));
+    //sendCmd(JSON.stringify({type: "sortie_joueur", pseudo: pseudo, room: roomID}));
 }
