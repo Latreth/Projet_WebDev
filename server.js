@@ -61,6 +61,18 @@ ws.on('connection', (socket, req) => {
 			/*if(type == "nouveau_ID"){
 				log(clientID,JSON.stringify({type: "ennemi_ID", cid: cmd.cid}));
 			}*/
+			if(type == "changecolor"){
+                let k = true;
+                for(let c in rooms[cmd.room]){
+                    if(rooms[cmd.room] == cmd.color) k = false;
+                }
+                if(k){
+                    rooms[cmd.room][cmd.pseudo].couleur = cmd.color;
+                    for(let c in rooms[cmd.room]){
+                        if(c != "playercount") log(rooms[cmd.room][c].ID, JSON.stringify({type: "changecolor", player: cmd.player, color: cmd.couleur}));
+                    }
+                }
+            }
 		}
 		catch(e){
 			console.log(e);

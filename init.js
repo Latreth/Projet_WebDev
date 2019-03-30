@@ -239,7 +239,7 @@ function move(x, y, dx, dy,id){
 	console.log(x+dx);*/
 	var a = y+dy;
 	var b = x+dx;
-	if(id==playerID) {sendCmd(JSON.stringify({type: 'move', x: x, y: y, dx: dx, dy: dy, room: roomID, player:playerID}));
+	if(id!=playerID) {
 	deplacement(x, y, dx*40, dy*40);
 	grid[b].splice(a,1,grid[x][y]);
 	//grid[x+dx][y+dy]={type:' ',player:0};
@@ -248,6 +248,7 @@ function move(x, y, dx, dy,id){
 	}*/
 	grid[x][y] = false;}
 	else{
+		sendCmd(JSON.stringify({type: 'move', x: x, y: y, dx: dx, dy: dy, room: roomID, player:playerID}));
 		deplacement(x, y, dx*40, dy*40);
 		grid[b].splice(a,1,grid[x][y]);
 		//grid[x+dx][y+dy]={type:' ',player:0};

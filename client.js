@@ -53,7 +53,9 @@ ws.onmessage = (msg) => {
 		ennemiID = data.cid;
 	}
 	else if(data.type == "action"){ 
-		move(data.x, data.y, data.dx, data.dy,data.player); 
+		if (data.player != playerID){
+			move(data.x, data.y, data.dx, data.dy,data.player); 
+		}
 	}
 }
 
@@ -114,7 +116,7 @@ function deselectTile(i,j) {
 		var a = x+dx+1;
 		var b = y+dy+1;
 		if(a>=1&&b>=1&&a<=8&&b<=8){
-			document.getElementById("tile_" + b + '_' + a ).style.backgroundColor = "#fff0";
+			document.getElementById("tile_" + b + '_' + a ).style.backgroundColor = "";
 		}
 	}
 }
