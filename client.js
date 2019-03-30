@@ -92,7 +92,9 @@ function selectTile(i, j){
 			var dy = ar[l][3];
 			var a = x+dx+1;
 			var b = y+dy+1;
-			document.getElementById("tile_" + b + '_' + a ).style.backgroundColor = "#ede60099";
+			if (a>=1&&b>=1&&a<=8&&b<=8) {
+				document.getElementById("tile_" + b + '_' + a ).style.backgroundColor = "#ede60099";
+			}
 		}
 	}
 	else {
@@ -108,7 +110,9 @@ function deselectTile(i,j) {
 		var dy = ar[l][3];
 		var a = x+dx+1;
 		var b = y+dy+1;
-		document.getElementById("tile_" + b + '_' + a ).style.backgroundColor = "#fff0";
+		if(a>=1&&b>=1&&a<=8&&b<=8){
+			document.getElementById("tile_" + b + '_' + a ).style.backgroundColor = "#fff0";
+		}
 	}
 }
 
@@ -196,22 +200,24 @@ function echecs(i,j){
 		var a = x+dx+1;
 		var b = y+dy+1;
 		console.log(b,a);
-		if (grid[a-1][b-1].type == 'roi' && grid[j-1][i-1].type != 'pion' && grid[a-1][b-1].player != playerID){
-			alert('Vous êtes en échec'); // Le faire afficher sur le bon joueur
-			enechec = true;
-			return true;
-		}
-		if (grid[a-1][b-1].type == 'roi' && grid[j-1][i-1].type == 'pion' && grid[a-1][b-1].player != playerID) {
-			console.log(a,j-1,"puis",b,i-1);
-			if (a != j-1 && b != i) {//pour les blancs
-				alert('Vous êtes en échec');//Echec pour le pion
-				enechec=true;
+		if (a-1>=0&&b-1>=0&&a-1<8&&b-1<8) {
+			if (grid[a-1][b-1].type == 'roi' && grid[j-1][i-1].type != 'pion' && grid[a-1][b-1].player != playerID){
+				alert('Vous êtes en échec'); // Le faire afficher sur le bon joueur
+				enechec = true;
 				return true;
 			}
-			if (a-2 != j-1 && b != i) {//pour les noirs
-				alert('Vous êtes en échec');//Echec pour le pion
-				enechec=true;
-				return true;
+			if (grid[a-1][b-1].type == 'roi' && grid[j-1][i-1].type == 'pion' && grid[a-1][b-1].player != playerID) {
+				console.log(a,j-1,"puis",b,i-1);
+				if (a != j-1 && b != i) {//pour les blancs
+					alert('Vous êtes en échec');//Echec pour le pion
+					enechec=true;
+					return true;
+				}
+				if (a-2 != j-1 && b != i) {//pour les noirs
+					alert('Vous êtes en échec');//Echec pour le pion
+					enechec=true;
+					return true;
+				}
 			}
 		}
 	}
@@ -228,22 +234,24 @@ function echecs2(i,j){
 		var a = x+dx+1;
 		var b = y+dy+1;
 		console.log(b,a);
-		if (grid[a-1][b-1].type == 'roi' && grid[j-1][i-1].type != 'pion' && grid[a-1][b-1].player == playerID){
-			//alert('Vous êtes en échec'); // Le faire afficher sur le bon joueur
-			enechec = true;
-			return true;
-		}
-		if (grid[a-1][b-1].type == 'roi' && grid[j-1][i-1].type == 'pion' && grid[a-1][b-1].player == playerID) {
-			console.log(a,j-1,"puis",b,i-1);
-			if (a != j-1 && b != i) {//pour les blancs
-				//alert('Vous êtes en échec');//Echec pour le pion
-				enechec=true;
+		if (a-1>=0&&b-1>=0&&a-1<8&&b-1<8) {
+			if (grid[a-1][b-1].type == 'roi' && grid[j-1][i-1].type != 'pion' && grid[a-1][b-1].player == playerID){
+				//alert('Vous êtes en échec'); // Le faire afficher sur le bon joueur
+				enechec = true;
 				return true;
 			}
-			if (a-2 != j-1 && b != i) {//pour les noirs
-				//alert('Vous êtes en échec');//Echec pour le pion
-				enechec=true;
-				return true;
+			if (grid[a-1][b-1].type == 'roi' && grid[j-1][i-1].type == 'pion' && grid[a-1][b-1].player == playerID) {
+				console.log(a,j-1,"puis",b,i-1);
+				if (a != j-1 && b != i) {//pour les blancs
+					//alert('Vous êtes en échec');//Echec pour le pion
+					enechec=true;
+					return true;
+				}
+				if (a-2 != j-1 && b != i) {//pour les noirs
+					//alert('Vous êtes en échec');//Echec pour le pion
+					enechec=true;
+					return true;
+				}
 			}
 		}
 	}
@@ -365,7 +373,7 @@ function changement_pion(nouveau){
 function akingisnear(j,i){
 	if(i-1>=0&&j-1>=0){if (grid[i-1][j-1].type=='roi'&&grid[i-1][j-1].player != playerID) return true;}
 	if (i-1>=0){if (grid[i-1][j].type=='roi'&&grid[i-1][j].player != playerID) return true;}
-	if (i-1 >=0 && j <8){if (grid[i-1][j+1].type=='roi'&&grid[i-1][j+1].player != playerID) return true;}
+	if (i-1 >=0 && j +1<8){if (grid[i-1][j+1].type=='roi'&&grid[i-1][j+1].player != playerID) return true;}
 	if (j-1>=0){if (grid[i][j-1].type=='roi'&&grid[i][j-1].player != playerID) return true;}
 	if (grid[i][j].type=='roi'&&grid[i][j].player != playerID) return true;
 	if(j+1<8){if (grid[i][j+1].type=='roi'&&grid[i][j+1].player != playerID) return true;}
