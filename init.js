@@ -252,7 +252,7 @@ function move(x, y, dx, dy){
 function undowmove(x,y,dx,dy,pion){
 	undowdeplacement(x,y,dx*40,dy*40,pion);
 	grid[x][y] = grid[x+dx][y+dy];
-	if (lastimage&&pion.player!=lastimage.player){
+	if (lastimage){
 		grid[x+dx][y+dy]={type:lastimage.type,player:lastimage.player};
 		lastimage=false;
 	}
@@ -322,10 +322,9 @@ for(i=1;i<9;i++){
 //Faire un timer pour les parties blitz
 //Je pense : besoin d'implementer une variable de tour (les paires pour un joueur, les impairs pour l'autre) 
 //afin de les empecher de jouer en même temps. 
-//Envoyer les messages d'apparition d'échec aux bonnes personnes
-//Interaction interface lors d'un échec et mat
+//Envoyer les messages d'apparition d'échec aux bonnes personnes (deja regler si on joue sur du tour par tour)
+//Interaction interface lors d'un échec et mat (facile) (faire dabord la variable tour, fonction ez apres)
 //IA si le temps le permet
-//interdire au roi un déplacement qui entraine une position d'échec
 //interdire aux rois d'être à moins d'une case d'écart
 //Implémenter la prise de pion 'en passant'
 //créer un id_joueur affecter au départ, qui donne le side et la couleur du joueur.

@@ -44,7 +44,7 @@ ws.onmessage = (msg) => {
 		for(let i = 1; i <= 8; ++i){
 			$('#tiles').append('<div id = "line_' + i + '"></div>');
 			for(let j = 1; j <= 8; ++j){
-				$('#line_' + i).append('<div class = "tile" id = "tile_' + i + '_' + j + '" onclick = "if (verif_mouv(' + i + ', ' + j + ')){echecs(' + i + ', ' + j + ');promotion(' + i + ', ' + j + ');deselectTile(' + i + ', ' + j + ');}else{deselectTile(' + i + ', ' + j + ');selectTile(' + i + ', ' + j + ');}"></div>');
+				$('#line_' + i).append('<div class = "tile" id = "tile_' + i + '_' + j + '" onclick = "if (verif_mouv(' + i + ', ' + j + ')){echecs(' + i + ', ' + j + ');promotion(' + i + ', ' + j + ');deselectTile(' + i + ', ' + j + ');}else{deselectTile(' + i + ', ' + j + ');selectTile(' + i + ', ' + j + ');lastimage=false;}"></div>');
 			}
 		}
 	}
@@ -136,7 +136,15 @@ function verif_mouv(i,j) {
 		}
 		tour+=1;
 		document.getElementById('zonetext').textContent+=" "+tour+".";
-		return true;
+		if (!nestplusenechec2()){
+			alert('Vous ne pouvez pas faire ce mouvement, cela vous mets en échec !');
+			undowmove(gj-1,gi-1,j-gj,i-gi,grid[j-1][i-1]);
+			enechec=false;
+			return false
+		}
+		else{
+			return true;
+		}
 	}
 	if (document.getElementById("tile_" + i + '_' + j ).style.backgroundColor=="rgba(237, 230, 0, 0.6)"&&enechec==true) {
 		if (grid[j-1][i-1]) {
@@ -205,7 +213,39 @@ function echecs(i,j){
 	return false;
 }
 
-function nestplusenechec () { //Fonction qui verifie l'ensemble des pièces ennemie, pour savoir si il y en a une qui mets le roi en echec
+function echecs2(i,j){
+	var ar = select(j-1,i-1);
+	for (var l = 0; l < ar.length; l++) {
+		var x = ar[l][0];
+		var y = ar[l][1];
+		var dx = ar[l][2];
+		var dy = ar[l][3];
+		var a = x+dx+1;
+		var b = y+dy+1;
+		console.log(b,a);
+		if (grid[a-1][b-1].type == 'roi' && grid[j-1][i-1].type != 'pion' && grid[a-1][b-1].player != playerID){
+			//alert('Vous êtes en échec'); // Le faire afficher sur le bon joueur
+			enechec = true;
+			return true;
+		}
+		if (grid[a-1][b-1].type == 'roi' && grid[j-1][i-1].type == 'pion' && grid[a-1][b-1].player != playerID) {
+			console.log(a,j-1,"puis",b,i-1);
+			if (a != j-1 && b != i) {//pour les blancs
+				//alert('Vous êtes en échec');//Echec pour le pion
+				enechec=true;
+				return true;
+			}
+			if (a-2 != j-1 && b != i) {//pour les noirs
+				//alert('Vous êtes en échec');//Echec pour le pion
+				enechec=true;
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+function nestplusenechec () { //Fonction qui verifie l'ensemble des pièces ennemie, pour savoir si il y en a une qui mets le roi en echec // return false si est toujours en echecs.
 	for (var i = 1; i <9; i++) {
 		for (var j = 1; j < 9; j++) {
 			if (grid[j-1][i-1]){
@@ -218,6 +258,22 @@ function nestplusenechec () { //Fonction qui verifie l'ensemble des pièces enne
 	enechec=false;
 	return true;
 }
+
+function nestplusenechec2 () { //Fonction qui verifie l'ensemble des pièces ennemie, pour savoir si il y en a une qui mets le roi en echec // return false si est toujours en echecs.
+	for (var i = 1; i <9; i++) {
+		for (var j = 1; j < 9; j++) {
+			if (grid[j-1][i-1]){
+				if(echecs2(i,j)){
+					return false;
+				}
+			}
+		}
+	}
+	enechec=false;
+	return true;
+}
+
+
 
 function promotion(i,j){ //Pour faire une promotion de pion si un pion touche la ligne de 0 ou 7
 	if (j==8 && grid[j-1][i-1].type == 'pion') {
