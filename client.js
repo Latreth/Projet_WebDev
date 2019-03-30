@@ -113,8 +113,13 @@ function deselectTile(i,j) {
 }
 
 function verif_mouv(i,j) {
+	console.log(i,j,"i et j");
+	if (document.getElementById("tile_" + i + '_' + j ).style.backgroundColor=="rgba(237, 230, 0, 0.6)"&&grid[gj-1][gi-1].type == 'roi'&&akingisnear(i-1,j-1)){//le roi se trouverai en i,j, mais il doit se trouver actuellement en gi gj
+		alert('Vous ne pouvez pas avoir votre roi à côté du roi adverse !');
+		return false;
+	}
 	if (document.getElementById("tile_" + i + '_' + j ).style.backgroundColor=="rgba(237, 230, 0, 0.6)"&&enechec==false) {
-		if (grid[j-1][i-1]) {
+		if (grid[j-1][i-1]) {//si il y a une prise
 			if (grid[gj-1][gi-1].type != 'pion') {
 				document.getElementById('zonetext').textContent += " " + grid[gj-1][gi-1].type[0].toUpperCase() + "x" + lettre[i]+j;
 				move(gj-1,gi-1,j-gj,i-gi);
@@ -124,7 +129,7 @@ function verif_mouv(i,j) {
 				move(gj-1,gi-1,j-gj,i-gi);				
 			}
 		}
-		else {
+		else {//si il n'y a pas de prise
 			if (grid[gj-1][gi-1].type != 'pion') {
 				document.getElementById('zonetext').textContent += " " + grid[gj-1][gi-1].type[0].toUpperCase() + lettre[i]+j;
 				move(gj-1,gi-1,j-gj,i-gi);
@@ -223,12 +228,12 @@ function echecs2(i,j){
 		var a = x+dx+1;
 		var b = y+dy+1;
 		console.log(b,a);
-		if (grid[a-1][b-1].type == 'roi' && grid[j-1][i-1].type != 'pion' && grid[a-1][b-1].player != playerID){
+		if (grid[a-1][b-1].type == 'roi' && grid[j-1][i-1].type != 'pion' && grid[a-1][b-1].player == playerID){
 			//alert('Vous êtes en échec'); // Le faire afficher sur le bon joueur
 			enechec = true;
 			return true;
 		}
-		if (grid[a-1][b-1].type == 'roi' && grid[j-1][i-1].type == 'pion' && grid[a-1][b-1].player != playerID) {
+		if (grid[a-1][b-1].type == 'roi' && grid[j-1][i-1].type == 'pion' && grid[a-1][b-1].player == playerID) {
 			console.log(a,j-1,"puis",b,i-1);
 			if (a != j-1 && b != i) {//pour les blancs
 				//alert('Vous êtes en échec');//Echec pour le pion
@@ -356,4 +361,15 @@ function changement_pion(nouveau){
     playerID = nouveau; //Il faut maintenant le propager
     //sendCmd(JSON.stringify({type: "nouveau_ID", cid : playerID}));
     //sendCmd(JSON.stringify({type: "sortie_joueur", pseudo: pseudo, room: roomID}));
+}
+function akingisnear(j,i){
+	if(i-1>=0&&j-1>=0){if (grid[i-1][j-1].type=='roi'&&grid[i-1][j-1].player != playerID) return true;}
+	if (i-1>=0){if (grid[i-1][j].type=='roi'&&grid[i-1][j].player != playerID) return true;}
+	if (i-1 >=0 && j <8){if (grid[i-1][j+1].type=='roi'&&grid[i-1][j+1].player != playerID) return true;}
+	if (j-1>=0){if (grid[i][j-1].type=='roi'&&grid[i][j-1].player != playerID) return true;}
+	if (grid[i][j].type=='roi'&&grid[i][j].player != playerID) return true;
+	if(j+1<8){if (grid[i][j+1].type=='roi'&&grid[i][j+1].player != playerID) return true;}
+	if(i+1<8&&j-1>=0){if (grid[i+1][j-1].type=='roi'&&grid[i+1][j-1].player != playerID) return true;}
+	if(i+1<8){if (grid[i+1][j].type=='roi'&&grid[i+1][j].player != playerID) return true;}
+	if(i+1<8&&j+1<8){if (grid[i+1][j+1].type=='roi'&&grid[i+1][j+1].player != playerID) return true;}
 }

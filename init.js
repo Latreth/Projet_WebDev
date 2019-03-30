@@ -325,6 +325,4 @@ for(i=1;i<9;i++){
 //Envoyer les messages d'apparition d'échec aux bonnes personnes (deja regler si on joue sur du tour par tour)
 //Interaction interface lors d'un échec et mat (facile) (faire dabord la variable tour, fonction ez apres)
 //IA si le temps le permet
-//interdire aux rois d'être à moins d'une case d'écart
 //Implémenter la prise de pion 'en passant'
-//créer un id_joueur affecter au départ, qui donne le side et la couleur du joueur.
