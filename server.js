@@ -42,7 +42,10 @@ ws.on('connection', (socket, req) => {
 					if(c != "playercount") log(rooms[cmd.room][c], JSON.stringify({type: "nouveau_joueur", pseudo: cmd.pseudo}));
 				}
 				if(rooms[cmd.room].playercount == 1) log(clientID, JSON.stringify({type: "autorisation", player: 1}));
-				if(rooms[cmd.room].playercount == 2) log(clientID, JSON.stringify({type: "autorisation", player: 2}));
+				if(rooms[cmd.room].playercount == 2) {
+					log(clientID, JSON.stringify({type: "autorisation", player: 2}));
+					log2(clientID, JSON.stringify({type: "ennemi_ID", cid: 1}));
+				}
 			}
 			if(type == "sortie_joueur"){
 				--rooms[cmd.room].playercount;
@@ -98,6 +101,14 @@ function log(id, str){
 	let data = JSON.stringify(pack);
 	return broadcast(id, data);
 }
+
+function log2(id,str){ //Appel envois a tout le monde sauf l'emmetteur
+	let pack = {};
+	pack.msg = str;
+	let data = JSON.stringify(pack);
+	return broadcast2(id,data);
+}
+
 function broadcast(id, msg){
 	if(id == "all"){
 		for(let i in client){
@@ -108,5 +119,14 @@ function broadcast(id, msg){
 	else{
 		let _socket = client[id].socket;
 		_socket.send(msg);
+	}
+}
+
+function broadcast2(id,msg) {//envois a tout le monde sauf à l'emetteur
+	for (let i in client) {
+		if (id!=i) {
+			let _socket = client[i].socket;
+			_socket.send(msg);
+		}
 	}
 }

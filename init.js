@@ -1,4 +1,5 @@
 //var grid = initGrille();
+var lastimage;
 
 var grid = new Array();
 grid = [[
@@ -248,6 +249,12 @@ function move(x, y, dx, dy){
 	grid[x][y] = false;
 }
 
+function undowmove(x,y,dx,dy,pion){
+	undowdeplacement(x,y,dx*40,dy*40,pion);
+	grid[x+dx][y+dy] = grid[x][y];
+	grid[x][y]=pion;
+}
+
 var ctx2 = document.getElementById('pieces').getContext('2d');
 var ctx3 = document.getElementById('pieces_prise').getContext('2d');
 ctx3.font ="20px Georgia";
@@ -270,12 +277,25 @@ function deplacement(x,y,deltax,deltay){ //deltax et deltay compris entre -8 et 
 	undraw(y*40,x*40);
 	if (grid[x+deltax/40][y+deltay/40]!=false){
 		var image = new Image();
-		image.src = 'Images/pions/'+grid[x+deltax/40][y+deltay/40].type+'_'+grid[x+deltax/40][y+deltay/40].player+'.png'
+		image.src = 'Images/pions/'+grid[x+deltax/40][y+deltay/40].type+'_'+grid[x+deltax/40][y+deltay/40].player+'.png';
+		lastimage = image;
 		ctx3.drawImage(image,ctx3.x,ctx3.y); //afficher en dessous de l'échiquier la pièce mangée
 		ctx3.x +=40;
 	}
 	undraw(y*40+deltay,x*40+deltax);
 	draw(y*40+deltay+40,x*40+deltax+40,'Images/pions/'+grid[x][y].type+'_'+grid[x][y].player+'.png');
+}
+
+function undowdeplacement(x,y,deltax,deltay,piece){
+	if (piece) { //si une pièce avait été prise
+		undraw(y*40,x*40);
+		draw(y*40,x*40,lastimage);
+		draw(y*40+deltay+40,x*40+deltax+40,'Images/pions/'+grid[x][y].type+'_'+grid[x][y].player+'.png');
+	}
+	else{ //sinon
+		undraw(y*40,x*40);
+		draw(y*40+deltay+40,x*40+deltax+40,'Images/pions/'+grid[x][y].type+'_'+grid[x][y].player+'.png');
+	}
 }
 //initialisation du plateau avec toute les pièces
 for(i=1;i<9;i++){

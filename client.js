@@ -6,6 +6,7 @@ var tour = 1;
 var mine = 2;
 var gi = 0 ;
 var gj = 0;
+var enechec = false;
 var pi=0;
 var pj=0;
 localStorage.pseudo = pseudo;
@@ -18,7 +19,7 @@ var ws = new WebSocket('ws://' + IP + ':80');
 var clientID = "";
 var playerID;
 var ennemiID;
-var roomID = 2;
+var roomID = 3;
 ws.onmessage = (msg) => {
 	let data = JSON.parse(msg.data);
 	data = JSON.parse(data.msg);
@@ -32,6 +33,7 @@ ws.onmessage = (msg) => {
 	}
 	else if(data.type == "nouveau_joueur"){
 		$('#zone_chat').append('<p><em>' + data.pseudo + ' a rejoint la partie</em></p>');
+		console.log(data);
 	}
 	else if(data.type == "sortie_joueur"){
 		$('#zone_chat').append('<p><em>' + data.pseudo + ' a quitté la partie</em></p>');
@@ -42,13 +44,14 @@ ws.onmessage = (msg) => {
 		for(let i = 1; i <= 8; ++i){
 			$('#tiles').append('<div id = "line_' + i + '"></div>');
 			for(let j = 1; j <= 8; ++j){
-				$('#line_' + i).append('<div class = "tile" id = "tile_' + i + '_' + j + '" onclick = "if (verif_mouv(' + i + ', ' + j + ')){echecs(' + i + ', ' + j + ');promotion(' + i + ', ' + j + ');deselectTile(' + i + ', ' + j + ');}else{deselectTile(' + i + ', ' + j + ');selectTile(' + i + ', ' + j + ');}"></div>');
+				$('#line_' + i).append('<div class = "tile" id = "tile_' + i + '_' + j + '" onclick = "if (verif_mouv(' + i + ', ' + j + ')){echecs(' + i + ', ' + j + ');promotion(' + i + ', ' + j + ');deselectTile(' + i + ', ' + j + ');}else{deselectTile(' + i + ', ' + j + ');selectTile(' + i + ', ' + j + ');}nestplusenechec();"></div>');
 			}
 		}
 	}
-	/*else if(data.type == "ennemi_ID"){
+	else if(data.type == "ennemi_ID"){
+		console.log("ici");
 		ennemiID = data.cid;
-	}*/
+	}
 }
 
 function sendCmd(str){
@@ -110,7 +113,7 @@ function deselectTile(i,j) {
 }
 
 function verif_mouv(i,j) {
-	if (document.getElementById("tile_" + i + '_' + j ).style.backgroundColor=="rgba(237, 230, 0, 0.6)") {
+	if (document.getElementById("tile_" + i + '_' + j ).style.backgroundColor=="rgba(237, 230, 0, 0.6)"&&enechec==false) {
 		if (grid[j-1][i-1]) {
 			if (grid[gj-1][gi-1].type != 'pion') {
 				document.getElementById('zonetext').textContent += " " + grid[gj-1][gi-1].type[0].toUpperCase() + "x" + lettre[i]+j;
@@ -135,6 +138,40 @@ function verif_mouv(i,j) {
 		document.getElementById('zonetext').textContent+=" "+tour+".";
 		return true;
 	}
+	if (document.getElementById("tile_" + i + '_' + j ).style.backgroundColor=="rgba(237, 230, 0, 0.6)"&&enechec==true) {
+		if (grid[j-1][i-1]) {
+			if (grid[gj-1][gi-1].type != 'pion') {
+				document.getElementById('zonetext').textContent += " " + grid[gj-1][gi-1].type[0].toUpperCase() + "x" + lettre[i]+j;
+				move(gj-1,gi-1,j-gj,i-gi);
+			}
+			else {
+				document.getElementById('zonetext').textContent += " x" + lettre[i]+j;
+				move(gj-1,gi-1,j-gj,i-gi);				
+			}
+		}
+		else {
+			if (grid[gj-1][gi-1].type != 'pion') {
+				document.getElementById('zonetext').textContent += " " + grid[gj-1][gi-1].type[0].toUpperCase() + lettre[i]+j;
+				move(gj-1,gi-1,j-gj,i-gi);
+			}
+			else {
+				document.getElementById('zonetext').textContent += " " + lettre[i]+j;
+				move(gj-1,gi-1,j-gj,i-gi);				
+			}
+		}
+		tour+=1;
+		if (nestplusenechec()) {
+			console.log("je suis la");
+			document.getElementById('zonetext').textContent+=" "+tour+".";
+			return true;
+		}
+		else {
+			console.log("non je suis ici");
+			console.log(grid[j-1][i-1]);
+			undowmove(gj-1,gi-1,j-gj,i-gi,grid[j-1][i-1]);
+			return false;
+		}
+	}
 	return false;
 }
 
@@ -148,10 +185,38 @@ function echecs(i,j){
 		var a = x+dx+1;
 		var b = y+dy+1;
 		console.log(b,a);
-		if (grid[a-1][b-1].type == 'roi' && grid[j-1][i-1].type != 'pion' && grid[a-1][b-1].player == 1){
+		if (grid[a-1][b-1].type == 'roi' && grid[j-1][i-1].type != 'pion' && grid[a-1][b-1].player != playerID){
 			alert('Vous êtes en échec'); // Le faire afficher sur le bon joueur
+			enechec = true;
+			return true;
+		}
+		if (grid[a-1][b-1].type == 'roi' && grid[j-1][i-1].type == 'pion' && grid[a-1][b-1].player != playerID) {
+			console.log(a,j-1,"puis",b,i-1);
+			if (a != j-1 && b != i) {//pour les blancs
+				alert('Vous êtes en échec');//Echec pour le pion
+				enechec=true;
+				return true;
+			}
+			if (a-2 != j-1 && b != i) {//pour les noirs
+				alert('Vous êtes en échec');//Echec pour le pion
+				enechec=true;
+				return true;
+			}
 		}
 	}
+	return false;
+}
+
+function nestplusenechec () { //Fonction qui verifie l'ensemble des pièces ennemie, pour savoir si il y en a une qui mets le roi en echec
+	for (var i = 1; i <9; i++) {
+		for (var j = 1; j < 9; j++) {
+			if(echecs(i,j)){
+				return false;
+			}
+		}
+	}
+	enechec=false;
+	return true;
 }
 
 function promotion(i,j){ //Pour faire une promotion de pion si un pion touche la ligne de 0 ou 7
