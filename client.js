@@ -44,7 +44,7 @@ ws.onmessage = (msg) => {
 		for(let i = 1; i <= 8; ++i){
 			$('#tiles').append('<div id = "line_' + i + '"></div>');
 			for(let j = 1; j <= 8; ++j){
-				$('#line_' + i).append('<div class = "tile" id = "tile_' + i + '_' + j + '" onclick = "if (verif_mouv(' + i + ', ' + j + ')){echecs(' + i + ', ' + j + ');promotion(' + i + ', ' + j + ');deselectTile(' + i + ', ' + j + ');}else{deselectTile(' + i + ', ' + j + ');selectTile(' + i + ', ' + j + ');}nestplusenechec();"></div>');
+				$('#line_' + i).append('<div class = "tile" id = "tile_' + i + '_' + j + '" onclick = "if (verif_mouv(' + i + ', ' + j + ')){echecs(' + i + ', ' + j + ');promotion(' + i + ', ' + j + ');deselectTile(' + i + ', ' + j + ');}else{deselectTile(' + i + ', ' + j + ');selectTile(' + i + ', ' + j + ');}"></div>');
 			}
 		}
 	}
@@ -161,12 +161,10 @@ function verif_mouv(i,j) {
 		}
 		tour+=1;
 		if (nestplusenechec()) {
-			console.log("je suis la");
 			document.getElementById('zonetext').textContent+=" "+tour+".";
 			return true;
 		}
 		else {
-			console.log("non je suis ici");
 			console.log(grid[j-1][i-1]);
 			undowmove(gj-1,gi-1,j-gj,i-gi,grid[j-1][i-1]);
 			return false;
@@ -210,8 +208,10 @@ function echecs(i,j){
 function nestplusenechec () { //Fonction qui verifie l'ensemble des pièces ennemie, pour savoir si il y en a une qui mets le roi en echec
 	for (var i = 1; i <9; i++) {
 		for (var j = 1; j < 9; j++) {
-			if(echecs(i,j)){
-				return false;
+			if (grid[j-1][i-1]){
+				if(echecs(i,j)){
+					return false;
+				}
 			}
 		}
 	}

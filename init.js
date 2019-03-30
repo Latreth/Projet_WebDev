@@ -1,5 +1,5 @@
 //var grid = initGrille();
-var lastimage;
+var lastimage=false;
 
 var grid = new Array();
 grid = [[
@@ -251,8 +251,14 @@ function move(x, y, dx, dy){
 
 function undowmove(x,y,dx,dy,pion){
 	undowdeplacement(x,y,dx*40,dy*40,pion);
-	grid[x+dx][y+dy] = grid[x][y];
-	grid[x][y]=pion;
+	grid[x][y] = grid[x+dx][y+dy];
+	if (lastimage&&pion.player!=lastimage.player){
+		grid[x+dx][y+dy]={type:lastimage.type,player:lastimage.player};
+		lastimage=false;
+	}
+	else{
+		grid[x+dx][y+dy]=false;
+	}
 }
 
 var ctx2 = document.getElementById('pieces').getContext('2d');
@@ -278,7 +284,7 @@ function deplacement(x,y,deltax,deltay){ //deltax et deltay compris entre -8 et 
 	if (grid[x+deltax/40][y+deltay/40]!=false){
 		var image = new Image();
 		image.src = 'Images/pions/'+grid[x+deltax/40][y+deltay/40].type+'_'+grid[x+deltax/40][y+deltay/40].player+'.png';
-		lastimage = image;
+		lastimage = {url:'Images/pions/'+grid[x+deltax/40][y+deltay/40].type+'_'+grid[x+deltax/40][y+deltay/40].player+'.png',type : grid[x+deltax/40][y+deltay/40].type,player : grid[x+deltax/40][y+deltay/40].player};
 		ctx3.drawImage(image,ctx3.x,ctx3.y); //afficher en dessous de l'échiquier la pièce mangée
 		ctx3.x +=40;
 	}
@@ -287,14 +293,17 @@ function deplacement(x,y,deltax,deltay){ //deltax et deltay compris entre -8 et 
 }
 
 function undowdeplacement(x,y,deltax,deltay,piece){
-	if (piece) { //si une pièce avait été prise
-		undraw(y*40,x*40);
-		draw(y*40,x*40,lastimage);
-		draw(y*40+deltay+40,x*40+deltax+40,'Images/pions/'+grid[x][y].type+'_'+grid[x][y].player+'.png');
+	if (lastimage&& piece.player!=lastimage.player) { //si une pièce avait été prise et qu'elle n'est pas au même joueur
+		undraw(y*40+deltay,x*40+deltax);
+		draw(y*40+deltay+40,x*40+deltax+40,lastimage.url);
+		draw(y*40+40,x*40+40,'Images/pions/'+grid[x+deltax/40][y+deltay/40].type+'_'+grid[x+deltax/40][y+deltay/40].player+'.png');
+		ctx3.x -=40;
+		ctx3.clearRect(ctx3.x,ctx3.y,40,40);
 	}
 	else{ //sinon
-		undraw(y*40,x*40);
-		draw(y*40+deltay+40,x*40+deltax+40,'Images/pions/'+grid[x][y].type+'_'+grid[x][y].player+'.png');
+		undraw(y*40+deltay,x*40+deltax);
+		//draw(y*40+deltay,x*40+deltax,lastimage);
+		draw(y*40+40,x*40+40,'Images/pions/'+grid[x+deltax/40][y+deltay/40].type+'_'+grid[x+deltax/40][y+deltay/40].player+'.png');
 	}
 }
 //initialisation du plateau avec toute les pièces
@@ -318,6 +327,5 @@ for(i=1;i<9;i++){
 //IA si le temps le permet
 //interdire au roi un déplacement qui entraine une position d'échec
 //interdire aux rois d'être à moins d'une case d'écart
-//empècher de bouger autre chose après une mise en échecs.
 //Implémenter la prise de pion 'en passant'
 //créer un id_joueur affecter au départ, qui donne le side et la couleur du joueur.
