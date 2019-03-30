@@ -232,32 +232,32 @@ function promotion(i,j){ //Pour faire une promotion de pion si un pion touche la
 	}
 }
 
-function achanger_tour(){
+function achanger_tour(a){
 	document.getElementById('promotion').style.visibility = 'hidden';
 	grid[pj-1][pi-1] = {type : "tour", player:2};
 	undraw((pi-1)*40,(pj-1)*40);
-    draw((pi)*40,(pj)*40,'Images/pions/tour_2.png');
+    draw((pi)*40,(pj)*40,'Images/pions/tour_'+a+'.png');
 }
 
-function achanger_fou(){
+function achanger_fou(a){
 	document.getElementById('promotion').style.visibility = 'hidden';
 	grid[pj-1][pi-1] = {type : "fou", player:2};
 	undraw((pi-1)*40,(pj-1)*40);
-    draw((pi)*40,(pj)*40,'Images/pions/fou_2.png');
+    draw((pi)*40,(pj)*40,'Images/pions/fou_'+a+'.png');
 }
 
-function achanger_cheval(){
+function achanger_cheval(a){
 	document.getElementById('promotion').style.visibility = 'hidden';
 	grid[pj-1][pi-1] = {type : "cheval", player:2};
 	undraw((pi-1)*40,(pj-1)*40);
-    draw((pi)*40,(pj)*40,'Images/pions/cheval_2.png');
+    draw((pi)*40,(pj)*40,'Images/pions/cheval_'+a+'.png');
 }
 
-function achanger_reine(){
+function achanger_reine(a){
 	document.getElementById('promotion').style.visibility = 'hidden';
 	grid[pj-1][pi-1] = {type : "reine", player:2};
 	undraw((pi-1)*40,(pj-1)*40);
-    draw((pi)*40,(pj)*40,'Images/pions/reine_2.png');
+    draw((pi)*40,(pj)*40,'Images/pions/reine_'+a+'.png');
 }
 
 
@@ -280,16 +280,16 @@ function changement_pion(nouveau){
     var div = document.createElement("div");
     var img1 = document.createElement("img");
     img1.src = "Images/pions/cheval_"+nouveau+".png";
-    img1.onclick = "achanger_cheval();";
+    img1.onclick = function() {achanger_cheval(nouveau);};
     var img2 = document.createElement("img");
     img2.src = "Images/pions/tour_"+nouveau+".png";
-    img2.onclick = "achanger_tour();";
+    img2.onclick = function () {achanger_tour(nouveau);};
     var img3 = document.createElement("img");
     img3.src = "Images/pions/reine_"+nouveau+".png";
-    img3.onclick = "achanger_reine();";
+    img3.onclick = function(){achanger_reine(nouveau);};
     var img4 = document.createElement("img");
     img4.src = "Images/pions/fou_"+nouveau+".png";
-    img4.onclick = "achanger_fou();";
+    img4.onclick = function() {achanger_fou(nouveau);};
     div.appendChild(img1);
     div.appendChild(img2);
     div.appendChild(img3);
