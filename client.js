@@ -52,6 +52,9 @@ ws.onmessage = (msg) => {
 		console.log("ici");
 		ennemiID = data.cid;
 	}
+	else if(data.type == "action"){ 
+		move(data.x, data.y, data.dx, data.dy,data.player); 
+	}
 }
 
 function sendCmd(str){
@@ -126,21 +129,21 @@ function verif_mouv(i,j) {
 		if (grid[j-1][i-1]) {//si il y a une prise
 			if (grid[gj-1][gi-1].type != 'pion') {
 				document.getElementById('zonetext').textContent += " " + grid[gj-1][gi-1].type[0].toUpperCase() + "x" + lettre[i]+j;
-				move(gj-1,gi-1,j-gj,i-gi);
+				move(gj-1,gi-1,j-gj,i-gi,playerID);
 			}
 			else {
 				document.getElementById('zonetext').textContent += " x" + lettre[i]+j;
-				move(gj-1,gi-1,j-gj,i-gi);				
+				move(gj-1,gi-1,j-gj,i-gi,playerID);				
 			}
 		}
 		else {//si il n'y a pas de prise
 			if (grid[gj-1][gi-1].type != 'pion') {
 				document.getElementById('zonetext').textContent += " " + grid[gj-1][gi-1].type[0].toUpperCase() + lettre[i]+j;
-				move(gj-1,gi-1,j-gj,i-gi);
+				move(gj-1,gi-1,j-gj,i-gi,playerID);
 			}
 			else {
 				document.getElementById('zonetext').textContent += " " + lettre[i]+j;
-				move(gj-1,gi-1,j-gj,i-gi);				
+				move(gj-1,gi-1,j-gj,i-gi,playerID);				
 			}
 		}
 		tour+=1;
@@ -159,21 +162,21 @@ function verif_mouv(i,j) {
 		if (grid[j-1][i-1]) {
 			if (grid[gj-1][gi-1].type != 'pion') {
 				document.getElementById('zonetext').textContent += " " + grid[gj-1][gi-1].type[0].toUpperCase() + "x" + lettre[i]+j;
-				move(gj-1,gi-1,j-gj,i-gi);
+				move(gj-1,gi-1,j-gj,i-gi,playerID);
 			}
 			else {
 				document.getElementById('zonetext').textContent += " x" + lettre[i]+j;
-				move(gj-1,gi-1,j-gj,i-gi);				
+				move(gj-1,gi-1,j-gj,i-gi,playerID);				
 			}
 		}
 		else {
 			if (grid[gj-1][gi-1].type != 'pion') {
 				document.getElementById('zonetext').textContent += " " + grid[gj-1][gi-1].type[0].toUpperCase() + lettre[i]+j;
-				move(gj-1,gi-1,j-gj,i-gi);
+				move(gj-1,gi-1,j-gj,i-gi,playerID);
 			}
 			else {
 				document.getElementById('zonetext').textContent += " " + lettre[i]+j;
-				move(gj-1,gi-1,j-gj,i-gi);				
+				move(gj-1,gi-1,j-gj,i-gi,playerID);				
 			}
 		}
 		tour+=1;
@@ -370,6 +373,7 @@ function changement_pion(nouveau){
     //sendCmd(JSON.stringify({type: "nouveau_ID", cid : playerID}));
     //sendCmd(JSON.stringify({type: "sortie_joueur", pseudo: pseudo, room: roomID}));
 }
+
 function akingisnear(j,i){
 	if(i-1>=0&&j-1>=0){if (grid[i-1][j-1].type=='roi'&&grid[i-1][j-1].player != playerID) return true;}
 	if (i-1>=0){if (grid[i-1][j].type=='roi'&&grid[i-1][j].player != playerID) return true;}

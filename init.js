@@ -233,20 +233,29 @@ function restrict(L, x, y){
 	return D;
 }
 
-function move(x, y, dx, dy){
+function move(x, y, dx, dy,id){
 	/*console.log(x);
 	console.log(dx);
 	console.log(x+dx);*/
 	var a = y+dy;
 	var b = x+dx;
+	if(id==playerID) {sendCmd(JSON.stringify({type: 'move', x: x, y: y, dx: dx, dy: dy, room: roomID, player:playerID}));
 	deplacement(x, y, dx*40, dy*40);
 	grid[b].splice(a,1,grid[x][y]);
 	//grid[x+dx][y+dy]={type:' ',player:0};
 	//grid[b][a] = grid[x][y];
 	/*for (var i = 0; i <8; i++) {
-		
 	}*/
-	grid[x][y] = false;
+	grid[x][y] = false;}
+	else{
+		deplacement(x, y, dx*40, dy*40);
+		grid[b].splice(a,1,grid[x][y]);
+		//grid[x+dx][y+dy]={type:' ',player:0};
+		//grid[b][a] = grid[x][y];
+		/*for (var i = 0; i <8; i++) {
+		}*/
+		grid[x][y] = false;
+	}
 }
 
 function undowmove(x,y,dx,dy,pion){
