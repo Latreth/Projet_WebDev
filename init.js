@@ -265,8 +265,8 @@ function move2(x,y,dx,dy,id){
 	}
 }
 
-function undowmove(x,y,dx,dy,pion,id){
-	sendCmd(JSON.stringify({type: 'undomove', x: x, y: y, dx: dx, dy: dy,pion:pion, room: roomID, player:playerID, lastimage:lastimage,texte:montexte}));
+function undowmove(x,y,dx,dy,pion,elm,id){
+	sendCmd(JSON.stringify({type: 'undomove', x: x, y: y, dx: dx, dy: dy,pion:pion, room: roomID, player:playerID, lastimage:lastimage,texte:montexte,elm:elm}));
 	montour=true;
 	undowdeplacement(x,y,dx*40,dy*40,pion);
 	grid[x][y] = grid[x+dx][y+dy];

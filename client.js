@@ -16,6 +16,9 @@ var pi=0;
 var pj=0;
 localStorage.pseudo = pseudo;
 document.title = pseudo + ' - ' + document.title;
+//var filepartie = new ActiveXObject("Scripting.FileSystemObject");
+//fileSystem.CreateTextFile("mapartie.txt",true);
+//var montexte2=fileSystem.OpenTextFile("mapartie.txt", 2 ,true); 
 
 // Connexion au serveur
 const IP = "207.154.242.88";
@@ -101,6 +104,7 @@ ws.onmessage = (msg) => {
 	else if(data.type == "undoaction"){
 		if(data.player != playerID){
 			undowmove2(data.x,data.y,data.dx,data.dy,data.pion,data.player,data.lastimage);
+			undowecriturepartie(data.elm);
 		}
 	}
     else if(data.type == "endgame"){
@@ -175,6 +179,7 @@ function deselectTile(i,j) {
 
 
 function verif_mouv(i,j) {
+	var elm;
 	if (montour) {
 		if (document.getElementById("tile_" + i + '_' + j ).style.backgroundColor=="rgba(237, 230, 0, 0.6)"&&grid[gj-1][gi-1].type == 'roi'&&akingisnear(i-1,j-1)){//le roi se trouverai en i,j, mais il doit se trouver actuellement en gi gj
 			alert('Vous ne pouvez pas avoir votre roi à côté du roi adverse !');
@@ -184,11 +189,15 @@ function verif_mouv(i,j) {
 			if (grid[j-1][i-1]) {//si il y a une prise
 				if (grid[gj-1][gi-1].type != 'pion') {
 					document.getElementById('zonetext').textContent += " " + grid[gj-1][gi-1].type[0].toUpperCase() + "x" + lettre[i]+j;
+					elm=8;
+					//montexte2.Write(" " + grid[gj-1][gi-1].type[0].toUpperCase() + "x" + lettre[i]+j);
 					montexte = " " + grid[gj-1][gi-1].type[0].toUpperCase() + "x" + lettre[i]+j;
 					move(gj-1,gi-1,j-gj,i-gi,playerID);
 				}
 				else {
 					document.getElementById('zonetext').textContent += " x" + lettre[i]+j;
+					elm=7;
+					//montexte2.Write(" x" + lettre[i]+j);
 					montexte = " x" + lettre[i]+j;
 					move(gj-1,gi-1,j-gj,i-gi,playerID);				
 				}
@@ -196,18 +205,23 @@ function verif_mouv(i,j) {
 			else {//si il n'y a pas de prise
 				if (grid[gj-1][gi-1].type != 'pion') {
 					document.getElementById('zonetext').textContent += " " + grid[gj-1][gi-1].type[0].toUpperCase() + lettre[i]+j;
+					elm=7;
+					//montexte2.Write(" " + grid[gj-1][gi-1].type[0].toUpperCase() + lettre[i]+j);
 					montexte = " " + grid[gj-1][gi-1].type[0].toUpperCase() + lettre[i]+j;
 					move(gj-1,gi-1,j-gj,i-gi,playerID);
 				}
 				else {
 					document.getElementById('zonetext').textContent += " " + lettre[i]+j;
+					elm=6;
+					//montexte2.Write(" " + lettre[i]+j);
 					montexte  = " " + lettre[i]+j;
 					move(gj-1,gi-1,j-gj,i-gi,playerID);				
 				}
 			}
 			if (!nestplusenechec2()){
 				alert('Vous ne pouvez pas faire ce mouvement, cela vous mets en échec !');
-				undowmove(gj-1,gi-1,j-gj,i-gi,grid[j-1][i-1]);
+				undowmove(gj-1,gi-1,j-gj,i-gi,grid[j-1][i-1],elm);
+				undowecriturepartie(elm);
 				enechec=false;
 				return false
 			}
@@ -218,21 +232,25 @@ function verif_mouv(i,j) {
 		if (document.getElementById("tile_" + i + '_' + j ).style.backgroundColor=="rgba(237, 230, 0, 0.6)"&&enechec==true) {
 			if (grid[j-1][i-1]) {
 				if (grid[gj-1][gi-1].type != 'pion') {
-					document.getElementById('zonetext').textContent += " " + grid[gj-1][gi-1].type[0].toUpperCase() + "x" + lettre[i]+j;
+					//document.getElementById('zonetext').textContent += " " + grid[gj-1][gi-1].type[0].toUpperCase() + "x" + lettre[i]+j;
+					//montexte2.Write(" " + grid[gj-1][gi-1].type[0].toUpperCase() + "x" + lettre[i]+j);
 					move(gj-1,gi-1,j-gj,i-gi,playerID);
 				}
 				else {
-					document.getElementById('zonetext').textContent += " x" + lettre[i]+j;
+					//document.getElementById('zonetext').textContent += " x" + lettre[i]+j;
+					//montexte2.Write(" x" + lettre[i]+j);
 					move(gj-1,gi-1,j-gj,i-gi,playerID);				
 				}
 			}
 			else {
 				if (grid[gj-1][gi-1].type != 'pion') {
-					document.getElementById('zonetext').textContent += " " + grid[gj-1][gi-1].type[0].toUpperCase() + lettre[i]+j;
+					//document.getElementById('zonetext').textContent += " " + grid[gj-1][gi-1].type[0].toUpperCase() + lettre[i]+j;
+					//montexte2.Write(" " + grid[gj-1][gi-1].type[0].toUpperCase() + lettre[i]+j);
 					move(gj-1,gi-1,j-gj,i-gi,playerID);
 				}
 				else {
-					document.getElementById('zonetext').textContent += " " + lettre[i]+j;
+					//document.getElementById('zonetext').textContent += " " + lettre[i]+j;
+					//montexte2.Write(" " + lettre[i]+j);
 					move(gj-1,gi-1,j-gj,i-gi,playerID);				
 				}
 				//move3(gj-1,gi-1,j-gj,i-gi);
@@ -240,6 +258,7 @@ function verif_mouv(i,j) {
 			tour+=1;
 			if (nestplusenechec()) {
 				document.getElementById('zonetext').textContent+=" "+tour+".";
+				//montexte2.WriteLine(" "+tour+".");
 				/*grid[gj-1][gi-1] = grid[j-1][i-1];
 				grid[j-1][i-1]=retour;
 				enechec=false;
@@ -251,12 +270,16 @@ function verif_mouv(i,j) {
 				grid[j-1][i-1]=retour;
 				afaitretour = true;
 				console.log("passe par la");*/
-				undowmove(gj-1,gi-1,j-gj,i-gi,grid[j-1][i-1]);
+				undowmove(gj-1,gi-1,j-gj,i-gi,grid[j-1][i-1],0);
 				return false;
 			}
 		}
 	}
 	return false;
+}
+
+function undowecriturepartie(elm){
+	document.getElementById('zonetext').textContent = document.getElementById('zonetext').textContent.substr(0,document.getElementById('zonetext').textContent.length-elm);
 }
 
 function echecs(i,j){

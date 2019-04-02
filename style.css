@@ -242,3 +242,17 @@ p em{
 	transform: translate(-50%,-50%);
 	visibility: hidden;
 }
+
+#telechargement{
+	display: inline;
+	float: right;
+	margin: auto;
+	width: 25px;
+	height: 25px;
+}
+
+#recap{
+	display: inline;
+	float:left;
+	margin: auto;
+}
