@@ -54,7 +54,7 @@ ws.onmessage = (msg) => {
 	}
 	else if(data.type == "action"){ 
 		if (data.player != playerID){
-			move(data.x, data.y, data.dx, data.dy,data.player); 
+			move2(data.x, data.y, data.dx, data.dy,data.player); 
 		}
 	}
 }

@@ -234,6 +234,34 @@ function restrict(L, x, y){
 }
 
 function move(x, y, dx, dy,id){
+	if (grid[x][y].player == playerID) {
+		/*console.log(x);
+		console.log(dx);
+		console.log(x+dx);*/
+		var a = y+dy;
+		var b = x+dx;
+		if(id!=playerID) {
+		deplacement(x, y, dx*40, dy*40);
+		grid[b].splice(a,1,grid[x][y]);
+		//grid[x+dx][y+dy]={type:' ',player:0};
+		//grid[b][a] = grid[x][y];
+		/*for (var i = 0; i <8; i++) {
+		}*/
+		grid[x][y] = false;}
+		else{
+			sendCmd(JSON.stringify({type: 'move', x: x, y: y, dx: dx, dy: dy, room: roomID, player:playerID}));
+			deplacement(x, y, dx*40, dy*40);
+			grid[b].splice(a,1,grid[x][y]);
+			//grid[x+dx][y+dy]={type:' ',player:0};
+			//grid[b][a] = grid[x][y];
+			/*for (var i = 0; i <8; i++) {
+			}*/
+			grid[x][y] = false;
+		}
+	}
+}
+
+function move2(x,y,dx,dy,id){
 	/*console.log(x);
 	console.log(dx);
 	console.log(x+dx);*/
@@ -291,7 +319,7 @@ function undraw(x,y){
 }
 function deplacement(x,y,deltax,deltay){ //deltax et deltay compris entre -8 et 8 pour le déplacement
 	undraw(y*40,x*40);
-	if (grid[x+deltax/40][y+deltay/40]!=false){
+	if (grid[x+deltax/40][y+deltay/40]!=false&&grid[x+deltax/40][y+deltay/40].player != playerID){
 		var image = new Image();
 		image.src = 'Images/pions/'+grid[x+deltax/40][y+deltay/40].type+'_'+grid[x+deltax/40][y+deltay/40].player+'.png';
 		lastimage = {url:'Images/pions/'+grid[x+deltax/40][y+deltay/40].type+'_'+grid[x+deltax/40][y+deltay/40].player+'.png',type : grid[x+deltax/40][y+deltay/40].type,player : grid[x+deltax/40][y+deltay/40].player};
