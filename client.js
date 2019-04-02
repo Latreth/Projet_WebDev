@@ -56,16 +56,33 @@ ws.onmessage = (msg) => {
 	else if(data.type == "ennemi_ID"){
 		ennemiID = data.cid;
 	}
+	else if(data.type == "promotion"){
+		if (data.player != playerID){
+			if (data.piece == "tour"){
+				achanger_tour2(data.a,data.pj,data.pi);
+			}
+			if (data.piece == "reine"){
+				achanger_reine2(data.a,data.pj,data.pi);
+			}
+			if (data.piece == "fou"){
+				achanger_fou2(data.a,data.pj,data.pi);
+			}
+			if (data.piece == "cheval"){
+				achanger_cheval2(data.a,data.pj,data.pi);
+			}
+		}
+	}
 	else if(data.type == "action"){ 
 		if (data.player != playerID){
 			document.getElementById('zonetext').textContent += data.texte;
 			move2(data.x, data.y, data.dx, data.dy,data.player); 
+			estenechecs();
 			montour=true;
 		}
 	}
 	else if(data.type == "undoaction"){
 		if(data.player != playerID){
-			undowmove2(data.x,data.y,data.dx,data.dy,data.pion,data.player);
+			undowmove2(data.x,data.y,data.dx,data.dy,data.pion,data.player,data.lastimage);
 		}
 	}
     else if(data.type == "endgame"){
@@ -140,84 +157,85 @@ function deselectTile(i,j) {
 
 
 function verif_mouv(i,j) {
-	//if (montour) {
-	if (document.getElementById("tile_" + i + '_' + j ).style.backgroundColor=="rgba(237, 230, 0, 0.6)"&&grid[gj-1][gi-1].type == 'roi'&&akingisnear(i-1,j-1)){//le roi se trouverai en i,j, mais il doit se trouver actuellement en gi gj
-		alert('Vous ne pouvez pas avoir votre roi à côté du roi adverse !');
-		return false;
-	}
-	if (document.getElementById("tile_" + i + '_' + j ).style.backgroundColor=="rgba(237, 230, 0, 0.6)"&&enechec==false) {
-		if (grid[j-1][i-1]) {//si il y a une prise
-			if (grid[gj-1][gi-1].type != 'pion') {
-				document.getElementById('zonetext').textContent += " " + grid[gj-1][gi-1].type[0].toUpperCase() + "x" + lettre[i]+j;
-				montexte = " " + grid[gj-1][gi-1].type[0].toUpperCase() + "x" + lettre[i]+j;
-				move(gj-1,gi-1,j-gj,i-gi,playerID);
-			}
-			else {
-				document.getElementById('zonetext').textContent += " x" + lettre[i]+j;
-				montexte = " x" + lettre[i]+j;
-				move(gj-1,gi-1,j-gj,i-gi,playerID);				
-			}
-		}
-		else {//si il n'y a pas de prise
-			if (grid[gj-1][gi-1].type != 'pion') {
-				document.getElementById('zonetext').textContent += " " + grid[gj-1][gi-1].type[0].toUpperCase() + lettre[i]+j;
-				montexte = " " + grid[gj-1][gi-1].type[0].toUpperCase() + lettre[i]+j;
-				move(gj-1,gi-1,j-gj,i-gi,playerID);
-			}
-			else {
-				document.getElementById('zonetext').textContent += " " + lettre[i]+j;
-				montexte  = " " + lettre[i]+j;
-				move(gj-1,gi-1,j-gj,i-gi,playerID);				
-			}
-		}
-		if (!nestplusenechec2()){
-			alert('Vous ne pouvez pas faire ce mouvement, cela vous mets en échec !');
-			undowmove(gj-1,gi-1,j-gj,i-gi,grid[j-1][i-1]);
-			enechec=false;
-			return false
-		}
-		else{
-			return true;
-		}
-	}
-	if (document.getElementById("tile_" + i + '_' + j ).style.backgroundColor=="rgba(237, 230, 0, 0.6)"&&enechec==true) {
-		if (grid[j-1][i-1]) {
-			if (grid[gj-1][gi-1].type != 'pion') {
-				document.getElementById('zonetext').textContent += " " + grid[gj-1][gi-1].type[0].toUpperCase() + "x" + lettre[i]+j;
-				move(gj-1,gi-1,j-gj,i-gi,playerID);
-			}
-			else {
-				document.getElementById('zonetext').textContent += " x" + lettre[i]+j;
-				move(gj-1,gi-1,j-gj,i-gi,playerID);				
-			}
-		}
-		else {
-			if (grid[gj-1][gi-1].type != 'pion') {
-				document.getElementById('zonetext').textContent += " " + grid[gj-1][gi-1].type[0].toUpperCase() + lettre[i]+j;
-				move(gj-1,gi-1,j-gj,i-gi,playerID);
-			}
-			else {
-				document.getElementById('zonetext').textContent += " " + lettre[i]+j;
-				move(gj-1,gi-1,j-gj,i-gi,playerID);				
-			}
-			//move3(gj-1,gi-1,j-gj,i-gi);
-		}
-		tour+=1;
-		if (nestplusenechec()) {
-			document.getElementById('zonetext').textContent+=" "+tour+".";
-			/*grid[gj-1][gi-1] = grid[j-1][i-1];
-			grid[j-1][i-1]=retour;
-			enechec=false;
-			enfaitretour = false;*/
-			return verif_mouv(i,j);
-		}
-		else {
-			/*grid[gj-1][gi-1] = grid[j-1][i-1];
-			grid[j-1][i-1]=retour;
-			afaitretour = true;
-			console.log("passe par la");*/
-			undowmove(gj-1,gi-1,j-gj,i-gi,grid[j-1][i-1]);
+	if (montour) {
+		if (document.getElementById("tile_" + i + '_' + j ).style.backgroundColor=="rgba(237, 230, 0, 0.6)"&&grid[gj-1][gi-1].type == 'roi'&&akingisnear(i-1,j-1)){//le roi se trouverai en i,j, mais il doit se trouver actuellement en gi gj
+			alert('Vous ne pouvez pas avoir votre roi à côté du roi adverse !');
 			return false;
+		}
+		if (document.getElementById("tile_" + i + '_' + j ).style.backgroundColor=="rgba(237, 230, 0, 0.6)"&&enechec==false) {
+			if (grid[j-1][i-1]) {//si il y a une prise
+				if (grid[gj-1][gi-1].type != 'pion') {
+					document.getElementById('zonetext').textContent += " " + grid[gj-1][gi-1].type[0].toUpperCase() + "x" + lettre[i]+j;
+					montexte = " " + grid[gj-1][gi-1].type[0].toUpperCase() + "x" + lettre[i]+j;
+					move(gj-1,gi-1,j-gj,i-gi,playerID);
+				}
+				else {
+					document.getElementById('zonetext').textContent += " x" + lettre[i]+j;
+					montexte = " x" + lettre[i]+j;
+					move(gj-1,gi-1,j-gj,i-gi,playerID);				
+				}
+			}
+			else {//si il n'y a pas de prise
+				if (grid[gj-1][gi-1].type != 'pion') {
+					document.getElementById('zonetext').textContent += " " + grid[gj-1][gi-1].type[0].toUpperCase() + lettre[i]+j;
+					montexte = " " + grid[gj-1][gi-1].type[0].toUpperCase() + lettre[i]+j;
+					move(gj-1,gi-1,j-gj,i-gi,playerID);
+				}
+				else {
+					document.getElementById('zonetext').textContent += " " + lettre[i]+j;
+					montexte  = " " + lettre[i]+j;
+					move(gj-1,gi-1,j-gj,i-gi,playerID);				
+				}
+			}
+			if (!nestplusenechec2()){
+				alert('Vous ne pouvez pas faire ce mouvement, cela vous mets en échec !');
+				undowmove(gj-1,gi-1,j-gj,i-gi,grid[j-1][i-1]);
+				enechec=false;
+				return false
+			}
+			else{
+				return true;
+			}
+		}
+		if (document.getElementById("tile_" + i + '_' + j ).style.backgroundColor=="rgba(237, 230, 0, 0.6)"&&enechec==true) {
+			if (grid[j-1][i-1]) {
+				if (grid[gj-1][gi-1].type != 'pion') {
+					document.getElementById('zonetext').textContent += " " + grid[gj-1][gi-1].type[0].toUpperCase() + "x" + lettre[i]+j;
+					move(gj-1,gi-1,j-gj,i-gi,playerID);
+				}
+				else {
+					document.getElementById('zonetext').textContent += " x" + lettre[i]+j;
+					move(gj-1,gi-1,j-gj,i-gi,playerID);				
+				}
+			}
+			else {
+				if (grid[gj-1][gi-1].type != 'pion') {
+					document.getElementById('zonetext').textContent += " " + grid[gj-1][gi-1].type[0].toUpperCase() + lettre[i]+j;
+					move(gj-1,gi-1,j-gj,i-gi,playerID);
+				}
+				else {
+					document.getElementById('zonetext').textContent += " " + lettre[i]+j;
+					move(gj-1,gi-1,j-gj,i-gi,playerID);				
+				}
+				//move3(gj-1,gi-1,j-gj,i-gi);
+			}
+			tour+=1;
+			if (nestplusenechec()) {
+				document.getElementById('zonetext').textContent+=" "+tour+".";
+				/*grid[gj-1][gi-1] = grid[j-1][i-1];
+				grid[j-1][i-1]=retour;
+				enechec=false;
+				enfaitretour = false;*/
+				return verif_mouv(i,j);
+			}
+			else {
+				/*grid[gj-1][gi-1] = grid[j-1][i-1];
+				grid[j-1][i-1]=retour;
+				afaitretour = true;
+				console.log("passe par la");*/
+				undowmove(gj-1,gi-1,j-gj,i-gi,grid[j-1][i-1]);
+				return false;
+			}
 		}
 	}
 	return false;
@@ -233,13 +251,13 @@ function echecs(i,j){
 		var a = x+dx+1;
 		var b = y+dy+1;
 		if (a-1>=0&&b-1>=0&&a-1<8&&b-1<8) {
-			if (grid[a-1][b-1].type == 'roi' && grid[j-1][i-1].type != 'pion' && grid[a-1][b-1].player != playerID){
+			if (grid[a-1][b-1].type == 'roi' && grid[j-1][i-1].type != 'pion' && grid[a-1][b-1].player == playerID){
 				alert('Vous êtes en échec'); // Le faire afficher sur le bon joueur
 				console.log("echecs",grid[j-1][i-1]);
 				enechec = true;
 				return true;
 			}
-			if (grid[a-1][b-1].type == 'roi' && grid[j-1][i-1].type == 'pion' && grid[a-1][b-1].player != playerID) {
+			if (grid[a-1][b-1].type == 'roi' && grid[j-1][i-1].type == 'pion' && grid[a-1][b-1].player == playerID) {
 				if (a != j-1 && b != i) {//pour les blancs
 					alert('Vous êtes en échec');//Echec pour le pion
 					enechec=true;
@@ -304,6 +322,18 @@ function nestplusenechec () { //Fonction qui verifie l'ensemble des pièces enne
 	return true;
 }
 
+function estenechecs() {
+	for (var i = 1; i <9; i++) {
+		for (var j = 1; j < 9; j++) {
+			if (grid[j-1][i-1]){
+				if(echecs(i,j)){
+					return 0;
+				}
+			}
+		}
+	}
+}
+
 function nestplusenechec2 () { //Fonction qui verifie l'ensemble des pièces ennemie, pour savoir si il y en a une qui mets le roi en echec // return false si est toujours en echecs.
 	for (var i = 1; i <9; i++) {
 		for (var j = 1; j < 9; j++) {
@@ -334,6 +364,7 @@ function promotion(i,j){ //Pour faire une promotion de pion si un pion touche la
 }
 
 function achanger_tour(a){
+	sendCmd(JSON.stringify({type: "promotion", pseudo: pseudo, pj:pj,pi:pi,a:a, room: roomID, player:playerID, piece:"tour"}));
 	document.getElementById('promotion').style.visibility = 'hidden';
 	grid[pj-1][pi-1] = {type : "tour", player:2};
 	undraw((pi-1)*40,(pj-1)*40);
@@ -341,6 +372,7 @@ function achanger_tour(a){
 }
 
 function achanger_fou(a){
+	sendCmd(JSON.stringify({type: "promotion", pseudo: pseudo, pj:pj,pi:pi,a:a, room: roomID, player:playerID, piece : "fou"}));
 	document.getElementById('promotion').style.visibility = 'hidden';
 	grid[pj-1][pi-1] = {type : "fou", player:2};
 	undraw((pi-1)*40,(pj-1)*40);
@@ -348,6 +380,7 @@ function achanger_fou(a){
 }
 
 function achanger_cheval(a){
+	sendCmd(JSON.stringify({type: "promotion", pseudo: pseudo, pj:pj,pi:pi,a:a, room: roomID, player:playerID, piece : "cheval"}));
 	document.getElementById('promotion').style.visibility = 'hidden';
 	grid[pj-1][pi-1] = {type : "cheval", player:2};
 	undraw((pi-1)*40,(pj-1)*40);
@@ -355,6 +388,35 @@ function achanger_cheval(a){
 }
 
 function achanger_reine(a){
+	sendCmd(JSON.stringify({type: "promotion", pseudo: pseudo, pj:pj,pi:pi,a:a, room: roomID, player:playerID, piece : "reine"}));
+	document.getElementById('promotion').style.visibility = 'hidden';
+	grid[pj-1][pi-1] = {type : "reine", player:2};
+	undraw((pi-1)*40,(pj-1)*40);
+    draw((pi)*40,(pj)*40,'Images/pions/reine_'+a+'.png');
+}
+
+function achanger_tour2(a,pj,pi){
+	document.getElementById('promotion').style.visibility = 'hidden';
+	grid[pj-1][pi-1] = {type : "tour", player:2};
+	undraw((pi-1)*40,(pj-1)*40);
+    draw((pi)*40,(pj)*40,'Images/pions/tour_'+a+'.png');
+}
+
+function achanger_fou2(a,pj,pi){
+	document.getElementById('promotion').style.visibility = 'hidden';
+	grid[pj-1][pi-1] = {type : "fou", player:2};
+	undraw((pi-1)*40,(pj-1)*40);
+    draw((pi)*40,(pj)*40,'Images/pions/fou_'+a+'.png');
+}
+
+function achanger_cheval2(a,pj,pi){
+	document.getElementById('promotion').style.visibility = 'hidden';
+	grid[pj-1][pi-1] = {type : "cheval", player:2};
+	undraw((pi-1)*40,(pj-1)*40);
+    draw((pi)*40,(pj)*40,'Images/pions/cheval_'+a+'.png');
+}
+
+function achanger_reine2(a,pj,pi){
 	document.getElementById('promotion').style.visibility = 'hidden';
 	grid[pj-1][pi-1] = {type : "reine", player:2};
 	undraw((pi-1)*40,(pj-1)*40);

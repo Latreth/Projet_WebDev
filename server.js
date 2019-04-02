@@ -58,7 +58,12 @@ ws.on('connection', (socket, req) => {
 			}
 			if(type == "undomove"){
 				for(let c in rooms[cmd.room]){
-					if(c!= "playercount") log(rooms[cmd.room][c].ID,JSON.stringify({type:  "undoaction",x:cmd.x,y:cmd.y,dx:cmd.dx,dy:cmd.dy,pion:cmd.pion,player:cmd.player}));
+					if(c!= "playercount") log(rooms[cmd.room][c].ID,JSON.stringify({type:  "undoaction",x:cmd.x,y:cmd.y,dx:cmd.dx,dy:cmd.dy,pion:cmd.pion,lastimage:cmd.lastimage,player:cmd.player}));
+				}
+			}
+			if(type == "promotion"){
+				for(let c in rooms[cmd.room]){
+					if(c!="promotion") log(rooms[cmd.room][c].ID,JSON.stringify({type: "promotion", pj:cmd.pj, pi:cmd.pi, a:cmd.a, player:cmd.player, piece : cmd.piece}));
 				}
 			}
 			if(type == "changecolor"){

@@ -265,28 +265,56 @@ function move2(x,y,dx,dy,id){
 	}
 }
 
-function undowmove(x,y,dx,dy,pion){
-	if (grid[x][y].player == playerID) {
-		montour=true;
-		undowdeplacement(x,y,dx*40,dy*40,pion);
-		grid[x][y] = grid[x+dx][y+dy];
-		if (lastimage){
-			grid[x+dx][y+dy]={type:lastimage.type,player:lastimage.player};
-			lastimage=false;
-		}
-		else{
-			grid[x+dx][y+dy]=false;
-		}
+function undowmove(x,y,dx,dy,pion,id){
+	sendCmd(JSON.stringify({type: 'undomove', x: x, y: y, dx: dx, dy: dy,pion:pion, room: roomID, player:playerID, lastimage:lastimage,texte:montexte}));
+	montour=true;
+	undowdeplacement(x,y,dx*40,dy*40,pion);
+	grid[x][y] = grid[x+dx][y+dy];
+	if (lastimage){
+		grid[x+dx][y+dy]={type:lastimage.type,player:lastimage.player};
+		lastimage=false;
 	}
-}
-
-function undowmove2(x,y,dx,dy,pion,id){
-	if (id!=playerID) {
+	else{
+		grid[x+dx][y+dy]=false;
+	}/*
+	if (grid[x][y].player == playerID) {
+		if(id!=playerID){
 			montour=true;
 			undowdeplacement(x,y,dx*40,dy*40,pion);
 			grid[x][y] = grid[x+dx][y+dy];
 			if (lastimage){
 				grid[x+dx][y+dy]={type:lastimage.type,player:lastimage.player};
+				lastimage=false;
+			}
+			else{
+				grid[x+dx][y+dy]=false;
+			}
+		}
+		else {
+			sendCmd(JSON.stringify({type: 'undomove', x: x, y: y, dx: dx, dy: dy,pion:pion, room: roomID, player:playerID, texte:montexte}));
+			montour=true;
+			undowdeplacement(x,y,dx*40,dy*40,pion);
+			grid[x][y] = grid[x+dx][y+dy];
+			if (lastimage){
+				grid[x+dx][y+dy]={type:lastimage.type,player:lastimage.player};
+				lastimage=false;
+			}
+			else{
+				grid[x+dx][y+dy]=false;
+			}
+		}
+	}*/
+}
+
+function undowmove2(x,y,dx,dy,pion,id,lastimage2){
+	if (id!=playerID) {
+			console.log("je suis la");
+			console.log(lastimage2);
+			montour=true;
+			undowdeplacement2(x,y,dx*40,dy*40,pion,lastimage2);
+			grid[x][y] = grid[x+dx][y+dy];
+			if (lastimage2){
+				grid[x+dx][y+dy]={type:lastimage2.type,player:lastimage2.player};
 				lastimage=false;
 			}
 			else{
@@ -298,8 +326,8 @@ function undowmove2(x,y,dx,dy,pion,id){
 		montour=true;
 		undowdeplacement(x,y,dx*40,dy*40,pion);
 		grid[x][y] = grid[x+dx][y+dy];
-		if (lastimage){
-			grid[x+dx][y+dy]={type:lastimage.type,player:lastimage.player};
+		if (lastimage2){
+			grid[x+dx][y+dy]={type:lastimage2.type,player:lastimage2.player};
 			lastimage=false;
 		}
 		else{
@@ -354,6 +382,21 @@ function undowdeplacement(x,y,deltax,deltay,piece){
 		draw(y*40+40,x*40+40,'Images/pions/'+grid[x+deltax/40][y+deltay/40].type+'_'+grid[x+deltax/40][y+deltay/40].player+'.png');
 	}
 }
+
+function undowdeplacement2(x,y,deltax,deltay,piece,lastimage2){
+	if (lastimage2&& piece.player!=lastimage2.player) { //si une pièce avait été prise et qu'elle n'est pas au même joueur
+		undraw(y*40+deltay,x*40+deltax);
+		draw(y*40+deltay+40,x*40+deltax+40,lastimage2.url);
+		draw(y*40+40,x*40+40,'Images/pions/'+grid[x+deltax/40][y+deltay/40].type+'_'+grid[x+deltax/40][y+deltay/40].player+'.png');
+		ctx3.x -=40;
+		ctx3.clearRect(ctx3.x,ctx3.y,40,40);
+	}
+	else{ //sinon
+		undraw(y*40+deltay,x*40+deltax);
+		//draw(y*40+deltay,x*40+deltax,lastimage);
+		draw(y*40+40,x*40+40,'Images/pions/'+grid[x+deltax/40][y+deltay/40].type+'_'+grid[x+deltax/40][y+deltay/40].player+'.png');
+	}
+}
 //initialisation du plateau avec toute les pièces
 for(i=1;i<9;i++){
 	for(j=1;j<9;j++){
@@ -366,10 +409,7 @@ for(i=1;i<9;i++){
 
 //Reste à faire :
 //Le roc
-//Interaction serveur pour la partie en cours (après chaque mouvement effectuer attente + deplacement)
 //Faire un timer pour les parties blitz
-//Je pense : besoin d'implementer une variable de tour (les paires pour un joueur, les impairs pour l'autre) 
-//afin de les empecher de jouer en même temps. 
 //Envoyer les messages d'apparition d'échec aux bonnes personnes (deja regler si on joue sur du tour par tour)
 //Interaction interface lors d'un échec et mat (facile) (faire dabord la variable tour, fonction ez apres)
 //IA si le temps le permet
