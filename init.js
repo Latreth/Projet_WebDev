@@ -205,7 +205,6 @@ function move(x, y, dx, dy,id){
 		tour+=1;
 		document.getElementById('zonetext').textContent+=" "+tour+".";
 	}
-	montour=false;
 	if (grid[x][y].player == playerID) {
 		/*console.log(x);
 		console.log(dx);
@@ -231,6 +230,7 @@ function move(x, y, dx, dy,id){
 			}*/
 			grid[x][y] = false;
 		}
+		montour=false;
 	}
 }
 
@@ -405,12 +405,43 @@ for(i=1;i<9;i++){
 		}
 	}
 }
-
+//initialisation des imgs pour promotion ici
+setTimeout(()=>{console.log(playerID,"playerID");var img1 = document.createElement("img");
+img1.src = "Images/pions/cheval_"+playerID+".png";
+img1.onclick = function() {achanger_cheval(playerID);};
+var img2 = document.createElement("img");
+img2.src = "Images/pions/tour_"+playerID+".png";
+img2.onclick = function () {achanger_tour(playerID);};
+var img3 = document.createElement("img");
+img3.src = "Images/pions/reine_"+playerID+".png";
+img3.onclick = function(){achanger_reine(playerID);};
+var img4 = document.createElement("img");
+img4.src = "Images/pions/fou_"+playerID+".png";
+img4.onclick = function() {achanger_fou(playerID);};
+document.getElementById('childrens').appendChild(img1);
+document.getElementById('childrens').appendChild(img2);
+document.getElementById('childrens').appendChild(img3);
+document.getElementById('childrens').appendChild(img4);}, 2000);
+/*var img1 = document.createElement("img");
+img1.src = "Images/pions/cheval_"+playerID+".png";
+img1.onclick = function() {achanger_cheval(playerID);};
+var img2 = document.createElement("img");
+img2.src = "Images/pions/tour_"+playerID+".png";
+img2.onclick = function () {achanger_tour(playerID);};
+var img3 = document.createElement("img");
+img3.src = "Images/pions/reine_"+playerID+".png";
+img3.onclick = function(){achanger_reine(playerID);};
+var img4 = document.createElement("img");
+img4.src = "Images/pions/fou_"+playerID+".png";
+img4.onclick = function() {achanger_fou(playerID);};
+document.getElementById('childrens').appendChild(img1);
+document.getElementById('childrens').appendChild(img2);
+document.getElementById('childrens').appendChild(img3);
+document.getElementById('childrens').appendChild(img4);*/
 
 //Reste à faire :
 //Le roc
 //Faire un timer pour les parties blitz
-//Envoyer les messages d'apparition d'échec aux bonnes personnes (deja regler si on joue sur du tour par tour)
 //Interaction interface lors d'un échec et mat (facile) (faire dabord la variable tour, fonction ez apres)
 //IA si le temps le permet
 //Implémenter la prise de pion 'en passant'
