@@ -59,16 +59,16 @@ ws.onmessage = (msg) => {
 	else if(data.type == "promotion"){
 		if (data.player != playerID){
 			if (data.piece == "tour"){
-				achanger_tour2(data.a,data.pj,data.pi);
+				achanger_tour2(data.a,data.pj,data.pi,data.player);
 			}
 			if (data.piece == "reine"){
-				achanger_reine2(data.a,data.pj,data.pi);
+				achanger_reine2(data.a,data.pj,data.pi,data.player);
 			}
 			if (data.piece == "fou"){
-				achanger_fou2(data.a,data.pj,data.pi);
+				achanger_fou2(data.a,data.pj,data.pi,data.player);
 			}
 			if (data.piece == "cheval"){
-				achanger_cheval2(data.a,data.pj,data.pi);
+				achanger_cheval2(data.a,data.pj,data.pi,data.player);
 			}
 		}
 	}
@@ -366,7 +366,7 @@ function promotion(i,j){ //Pour faire une promotion de pion si un pion touche la
 function achanger_tour(a){
 	sendCmd(JSON.stringify({type: "promotion", pseudo: pseudo, pj:pj,pi:pi,a:a, room: roomID, player:playerID, piece:"tour"}));
 	document.getElementById('promotion').style.visibility = 'hidden';
-	grid[pj-1][pi-1] = {type : "tour", player:2};
+	grid[pj-1][pi-1] = {type : "tour", player:playerID};
 	undraw((pi-1)*40,(pj-1)*40);
     draw((pi)*40,(pj)*40,'Images/pions/tour_'+a+'.png');
 }
@@ -374,7 +374,7 @@ function achanger_tour(a){
 function achanger_fou(a){
 	sendCmd(JSON.stringify({type: "promotion", pseudo: pseudo, pj:pj,pi:pi,a:a, room: roomID, player:playerID, piece : "fou"}));
 	document.getElementById('promotion').style.visibility = 'hidden';
-	grid[pj-1][pi-1] = {type : "fou", player:2};
+	grid[pj-1][pi-1] = {type : "fou", player:playerID};
 	undraw((pi-1)*40,(pj-1)*40);
     draw((pi)*40,(pj)*40,'Images/pions/fou_'+a+'.png');
 }
@@ -382,7 +382,7 @@ function achanger_fou(a){
 function achanger_cheval(a){
 	sendCmd(JSON.stringify({type: "promotion", pseudo: pseudo, pj:pj,pi:pi,a:a, room: roomID, player:playerID, piece : "cheval"}));
 	document.getElementById('promotion').style.visibility = 'hidden';
-	grid[pj-1][pi-1] = {type : "cheval", player:2};
+	grid[pj-1][pi-1] = {type : "cheval", player:playerID};
 	undraw((pi-1)*40,(pj-1)*40);
     draw((pi)*40,(pj)*40,'Images/pions/cheval_'+a+'.png');
 }
@@ -390,35 +390,35 @@ function achanger_cheval(a){
 function achanger_reine(a){
 	sendCmd(JSON.stringify({type: "promotion", pseudo: pseudo, pj:pj,pi:pi,a:a, room: roomID, player:playerID, piece : "reine"}));
 	document.getElementById('promotion').style.visibility = 'hidden';
-	grid[pj-1][pi-1] = {type : "reine", player:2};
+	grid[pj-1][pi-1] = {type : "reine", player:playerID};
 	undraw((pi-1)*40,(pj-1)*40);
     draw((pi)*40,(pj)*40,'Images/pions/reine_'+a+'.png');
 }
 
-function achanger_tour2(a,pj,pi){
+function achanger_tour2(a,pj,pi,id){
 	document.getElementById('promotion').style.visibility = 'hidden';
-	grid[pj-1][pi-1] = {type : "tour", player:2};
+	grid[pj-1][pi-1] = {type : "tour", player:id};
 	undraw((pi-1)*40,(pj-1)*40);
     draw((pi)*40,(pj)*40,'Images/pions/tour_'+a+'.png');
 }
 
-function achanger_fou2(a,pj,pi){
+function achanger_fou2(a,pj,pi,id){
 	document.getElementById('promotion').style.visibility = 'hidden';
-	grid[pj-1][pi-1] = {type : "fou", player:2};
+	grid[pj-1][pi-1] = {type : "fou", player:id};
 	undraw((pi-1)*40,(pj-1)*40);
     draw((pi)*40,(pj)*40,'Images/pions/fou_'+a+'.png');
 }
 
-function achanger_cheval2(a,pj,pi){
+function achanger_cheval2(a,pj,pi,id){
 	document.getElementById('promotion').style.visibility = 'hidden';
-	grid[pj-1][pi-1] = {type : "cheval", player:2};
+	grid[pj-1][pi-1] = {type : "cheval", player:id};
 	undraw((pi-1)*40,(pj-1)*40);
     draw((pi)*40,(pj)*40,'Images/pions/cheval_'+a+'.png');
 }
 
-function achanger_reine2(a,pj,pi){
+function achanger_reine2(a,pj,pi,id){
 	document.getElementById('promotion').style.visibility = 'hidden';
-	grid[pj-1][pi-1] = {type : "reine", player:2};
+	grid[pj-1][pi-1] = {type : "reine", player:id};
 	undraw((pi-1)*40,(pj-1)*40);
     draw((pi)*40,(pj)*40,'Images/pions/reine_'+a+'.png');
 }
