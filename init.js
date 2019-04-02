@@ -41,51 +41,6 @@ grid = [[
 			{type: 'tour', player: 2}
 		]]
 
-
-
-/*	function initLigne(k, p){
-		if(k == 1) return [
-			{type: 'pion', player: p},
-			{type: 'pion', player: p},
-			{type: 'pion', player: p},
-			{type: 'pion', player: p},
-			{type: 'pion', player: p},
-			{type: 'pion', player: p},
-			{type: 'pion', player: p},
-			{type: 'pion', player: p}
-		];
-		if(k == 2) return [
-			{type: 'tour', player: p},
-			{type: 'cheval', player: p},
-			{type: 'fou', player: p},
-			{type: 'reine', player: p},
-			{type: 'roi', player: p},
-			{type: 'fou', player: p},
-			{type: 'cheval', player: p},
-			{type: 'tour', player: p}
-		];
-	}
-	let L = [];
-	let i = 1;
-	while(i <= 8){
-		L[i-1] = false;
-		++i;
-	}
-	let G = [];
-	i = 1;
-	while(i <= 8){
-		G[i-1] = L;
-		++i;
-	}
-	G[0] = initLigne(2, 1);
-	G[1] = initLigne(1, 1);
-	G[6] = initLigne(1, 2);
-	G[7] = initLigne(2, 2);
-	G[0][3].type = 'roi';
-	G[0][4].type = 'reine';
-	return G;
-}*/
-
 function select(x, y){
 	let G = grid;
 	if(!G[x][y]) return;
