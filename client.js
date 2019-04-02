@@ -96,6 +96,7 @@ ws.onmessage = (msg) => {
 		else {
 			document.getElementById('end').style.visibility  = 'visible';
 		}
+		document.getElementById('zonetext').textContent += "end.";
 	}
 	else if(data.type == "undoaction"){
 		if(data.player != playerID){
