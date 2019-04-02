@@ -25,71 +25,69 @@ ws.on('connection', (socket, req) => {
 			let type = cmd.type;
 			if(type == "chat_message"){
 				for(let c in rooms[cmd.room]){
-					if(c != "playercount") log(rooms[cmd.room][c], JSON.stringify({type: "chat_message", pseudo: cmd.pseudo, message: cmd.message}));
-				}
-			}
-			if(type == "action"){
-				for(let c in rooms[cmd.room]){
-					if(c != "playercount") log(rooms[cmd.room][c], JSON.stringify({type: "action", pseudo: cmd.pseudo, message: cmd.message}));
+					if(c != "playercount") log(rooms[cmd.room][c].ID, JSON.stringify({type: "chat_message", pseudo: cmd.pseudo, message: cmd.message}));
 				}
 			}
 			if(type == "nouveau_joueur"){
 				if(!rooms[cmd.room]) rooms[cmd.room] = {playercount: 0};
-				rooms[cmd.room][cmd.pseudo] = clientID;
+				let color = 1;
+				if(rooms[cmd.room].playercount == 1) color = 2;
+				rooms[cmd.room][cmd.pseudo] = {ID: clientID, couleur: color};
 				++rooms[cmd.room].playercount;
 				users[clientID] = [cmd.room, cmd.pseudo];
 				for(let c in rooms[cmd.room]){
-					if(c != "playercount") log(rooms[cmd.room][c], JSON.stringify({type: "nouveau_joueur", pseudo: cmd.pseudo}));
+					if(c != "playercount") log(rooms[cmd.room][c].ID, JSON.stringify({type: "nouveau_joueur", pseudo: cmd.pseudo}));
 				}
-				if(rooms[cmd.room].playercount == 1) log(clientID, JSON.stringify({type: "autorisation", player: 1}));
-				if(rooms[cmd.room].playercount == 2) {
-					log(clientID, JSON.stringify({type: "autorisation", player: 2}));
-					log2(clientID, JSON.stringify({type: "ennemi_ID", cid: 1}));
-				}
+				log(clientID, JSON.stringify({type: "autorisation", player: color}));
 			}
 			if(type == "sortie_joueur"){
 				--rooms[cmd.room].playercount;
 				delete rooms[cmd.room][cmd.pseudo];
 				for(let c in rooms[cmd.room]){
-					if(c != "playercount") log(rooms[cmd.room][c], JSON.stringify({type: "sortie_joueur", pseudo: cmd.pseudo}));
+					if(c != "playercount") log(rooms[cmd.room][c].ID, JSON.stringify({type: "sortie_joueur", pseudo: cmd.pseudo}));
 				}
 			}
 			if(type == "nouveau_salon"){
 				rooms[cmd.room] = {playercount: 0};
-				log(clientID, JSON.stringify({type: "nouveau_joueur", pseudo: cmd.pseudo}));
+				log(clientID, JSON.stringify({type: "nouveau_salon", pseudo: cmd.pseudo}));
 			}
-			/*if(type == "nouveau_ID"){
-				log(clientID,JSON.stringify({type: "ennemi_ID", cid: cmd.cid}));
-			}*/
+			if(type == "move"){
+				for(let c in rooms[cmd.room]){
+					if(c != "playercount") log(rooms[cmd.room][c].ID, JSON.stringify({type: "action", x: cmd.x, y: cmd.y, dx: cmd.dx, dy: cmd.dy, player: cmd.player, texte: cmd.texte}));
+				}
+			}
 			if(type == "changecolor"){
-                let k = true;
-                for(let c in rooms[cmd.room]){
-                    if(rooms[cmd.room] == cmd.color) k = false;
-                }
-                if(k){
-                    rooms[cmd.room][cmd.pseudo].couleur = cmd.color;
-                    for(let c in rooms[cmd.room]){
-                        if(c != "playercount") log(rooms[cmd.room][c].ID, JSON.stringify({type: "changecolor", player: cmd.player, color: cmd.couleur}));
-                    }
-                }
-            }
+				let k = true;
+				for(let c in rooms[cmd.room]){
+					if(rooms[cmd.room] == cmd.color) k = false;
+				}
+				if(k){
+					rooms[cmd.room][cmd.pseudo].couleur = cmd.color;
+					for(let c in rooms[cmd.room]){
+						if(c != "playercount") log(rooms[cmd.room][c].ID, JSON.stringify({type: "changecolor", player: cmd.player, color: cmd.couleur}));
+					}
+				}
+				else log(clientID, JSON.stringify({type: "error", message: "pas possible"}));
+			}
 		}
 		catch(e){
 			console.log(e);
 			return socket.close();
 		}
 	});
-	socket.on('close', () => {/*
-		if(!!users[client[id]]){
-			let room = users[client[id]][0];
-			let pseudo = users[client[id]][1];
-			--rooms[room].playercount;
-			delete rooms[room][pseudo];
-			for(let c in cmd.room){
-				if(c != "playercount") log(rooms[cmd.room][c], JSON.stringify({type: "sortie_joueur", pseudo: pseudo}));
-			}
-		}*/
+	socket.on('close', () => {
 		delete client[id];
+		for(let r in rooms){
+			for(let p in rooms[r]){
+				if(p != "playercount" && rooms[r][p].ID == id && rooms[r][p].couleur <= 4){
+					for(let c in rooms[r]){
+						if(c != "playercount") log(rooms[cmd.room][c].ID, JSON.stringify({type: "endgame", player: p}));
+					}
+					delete rooms[r];
+					break;
+				}
+			}
+		}
 	});
 });
 
@@ -114,13 +112,6 @@ function log(id, str){
 	return broadcast(id, data);
 }
 
-function log2(id,str){ //Appel envois a tout le monde sauf l'emmetteur
-	let pack = {};
-	pack.msg = str;
-	let data = JSON.stringify(pack);
-	return broadcast2(id,data);
-}
-
 function broadcast(id, msg){
 	if(id == "all"){
 		for(let i in client){
@@ -131,14 +122,5 @@ function broadcast(id, msg){
 	else{
 		let _socket = client[id].socket;
 		_socket.send(msg);
-	}
-}
-
-function broadcast2(id,msg) {//envois a tout le monde sauf à l'emetteur
-	for (let i in client) {
-		if (id!=i) {
-			let _socket = client[i].socket;
-			_socket.send(msg);
-		}
 	}
 }

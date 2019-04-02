@@ -6,7 +6,11 @@ var tour = 1;
 var mine = 2;
 var gi = 0 ;
 var gj = 0;
+var blanc = 1;
+var noir = 2;
 var enechec = false;
+var montexte = "";
+var montour = true;
 var pi=0;
 var pj=0;
 localStorage.pseudo = pseudo;
@@ -53,7 +57,9 @@ ws.onmessage = (msg) => {
 	}
 	else if(data.type == "action"){ 
 		if (data.player != playerID){
+			document.getElementById('zonetext').textContent += data.texte;
 			move2(data.x, data.y, data.dx, data.dy,data.player); 
+			montour=true;
 		}
 	}
 }
@@ -116,7 +122,9 @@ function deselectTile(i,j) {
 	}
 }
 
+
 function verif_mouv(i,j) {
+	if (montour) {
 	if (document.getElementById("tile_" + i + '_' + j ).style.backgroundColor=="rgba(237, 230, 0, 0.6)"&&grid[gj-1][gi-1].type == 'roi'&&akingisnear(i-1,j-1)){//le roi se trouverai en i,j, mais il doit se trouver actuellement en gi gj
 		alert('Vous ne pouvez pas avoir votre roi à côté du roi adverse !');
 		return false;
@@ -125,25 +133,27 @@ function verif_mouv(i,j) {
 		if (grid[j-1][i-1]) {//si il y a une prise
 			if (grid[gj-1][gi-1].type != 'pion') {
 				document.getElementById('zonetext').textContent += " " + grid[gj-1][gi-1].type[0].toUpperCase() + "x" + lettre[i]+j;
+				montexte = " " + grid[gj-1][gi-1].type[0].toUpperCase() + "x" + lettre[i]+j;
 				move(gj-1,gi-1,j-gj,i-gi,playerID);
 			}
 			else {
 				document.getElementById('zonetext').textContent += " x" + lettre[i]+j;
+				montexte = " x" + lettre[i]+j;
 				move(gj-1,gi-1,j-gj,i-gi,playerID);				
 			}
 		}
 		else {//si il n'y a pas de prise
 			if (grid[gj-1][gi-1].type != 'pion') {
 				document.getElementById('zonetext').textContent += " " + grid[gj-1][gi-1].type[0].toUpperCase() + lettre[i]+j;
+				montexte = " " + grid[gj-1][gi-1].type[0].toUpperCase() + lettre[i]+j;
 				move(gj-1,gi-1,j-gj,i-gi,playerID);
 			}
 			else {
 				document.getElementById('zonetext').textContent += " " + lettre[i]+j;
+				montexte  = " " + lettre[i]+j;
 				move(gj-1,gi-1,j-gj,i-gi,playerID);				
 			}
 		}
-		tour+=1;
-		document.getElementById('zonetext').textContent+=" "+tour+".";
 		if (!nestplusenechec2()){
 			alert('Vous ne pouvez pas faire ce mouvement, cela vous mets en échec !');
 			undowmove(gj-1,gi-1,j-gj,i-gi,grid[j-1][i-1]);
@@ -174,6 +184,7 @@ function verif_mouv(i,j) {
 				document.getElementById('zonetext').textContent += " " + lettre[i]+j;
 				move(gj-1,gi-1,j-gj,i-gi,playerID);				
 			}
+			//move3(gj-1,gi-1,j-gj,i-gi);
 		}
 		tour+=1;
 		if (nestplusenechec()) {
@@ -185,7 +196,7 @@ function verif_mouv(i,j) {
 			undowmove(gj-1,gi-1,j-gj,i-gi,grid[j-1][i-1]);
 			return false;
 		}
-	}
+	}}
 	return false;
 }
 

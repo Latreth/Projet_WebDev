@@ -189,6 +189,11 @@ function restrict(L, x, y){
 }
 
 function move(x, y, dx, dy,id){
+	if (playerID == noir) {		
+		tour+=1;
+		document.getElementById('zonetext').textContent+=" "+tour+".";
+	}
+	montour=false;
 	if (grid[x][y].player == playerID) {
 		/*console.log(x);
 		console.log(dx);
@@ -204,7 +209,8 @@ function move(x, y, dx, dy,id){
 		}*/
 		grid[x][y] = false;}
 		else{
-			sendCmd(JSON.stringify({type: 'move', x: x, y: y, dx: dx, dy: dy, room: roomID, player:playerID}));
+			console.log(montexte);
+			sendCmd(JSON.stringify({type: 'move', x: x, y: y, dx: dx, dy: dy, room: roomID, player:playerID, texte:montexte}));
 			deplacement(x, y, dx*40, dy*40);
 			grid[b].splice(a,1,grid[x][y]);
 			//grid[x+dx][y+dy]={type:' ',player:0};
@@ -231,7 +237,8 @@ function move2(x,y,dx,dy,id){
 	}*/
 	grid[x][y] = false;}
 	else{
-		sendCmd(JSON.stringify({type: 'move', x: x, y: y, dx: dx, dy: dy, room: roomID, player:playerID}));
+		console.log(montexte);
+		sendCmd(JSON.stringify({type: 'move', x: x, y: y, dx: dx, dy: dy, room: roomID, player:playerID, texte:montexte}));
 		deplacement(x, y, dx*40, dy*40);
 		grid[b].splice(a,1,grid[x][y]);
 		//grid[x+dx][y+dy]={type:' ',player:0};
@@ -240,9 +247,14 @@ function move2(x,y,dx,dy,id){
 		}*/
 		grid[x][y] = false;
 	}
+	if (playerID==blanc){
+		tour+=1;
+		document.getElementById('zonetext').textContent+=" "+tour+".";
+	}
 }
 
 function undowmove(x,y,dx,dy,pion){
+	montour=true;
 	undowdeplacement(x,y,dx*40,dy*40,pion);
 	grid[x][y] = grid[x+dx][y+dy];
 	if (lastimage){
