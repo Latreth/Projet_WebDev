@@ -11,6 +11,7 @@ var noir = 2;
 var enechec = false;
 var montexte = "";
 var montour = true;
+var afaitretour=false;
 var pi=0;
 var pj=0;
 localStorage.pseudo = pseudo;
@@ -62,6 +63,14 @@ ws.onmessage = (msg) => {
 			montour=true;
 		}
 	}
+	else if(data.type == "undoaction"){
+		if(data.player != playerID){
+			undowmove2(data.x,data.y,data.dx,data.dy,data.pion,data.player);
+		}
+	}
+    else if(data.type == "endgame"){
+        $('#zone_chat').append('<p><em>Fin du jeu, ' + data.player + ' ayant quitté la partie</em></p>');
+    }
 }
 
 function sendCmd(str){
@@ -91,7 +100,14 @@ window.addEventListener('beforeunload', () => {
 
 function selectTile(i, j){
 	if (grid[j-1][i-1]!=false) {
-		ar = select(j-1,i-1);
+		console.log(i,j,"i et j");
+		console.log(gi,gj,"gi et gj");
+		if (!afaitretour){
+			ar = select(j-1,i-1);
+		}
+		else{
+			ar = select(gj-1,gi-1);
+		}
 		gi = i;
 		gj = j;
 		for (var l = 0; l < ar.length; l++) {
@@ -124,7 +140,7 @@ function deselectTile(i,j) {
 
 
 function verif_mouv(i,j) {
-	if (montour) {
+	//if (montour) {
 	if (document.getElementById("tile_" + i + '_' + j ).style.backgroundColor=="rgba(237, 230, 0, 0.6)"&&grid[gj-1][gi-1].type == 'roi'&&akingisnear(i-1,j-1)){//le roi se trouverai en i,j, mais il doit se trouver actuellement en gi gj
 		alert('Vous ne pouvez pas avoir votre roi à côté du roi adverse !');
 		return false;
@@ -189,14 +205,21 @@ function verif_mouv(i,j) {
 		tour+=1;
 		if (nestplusenechec()) {
 			document.getElementById('zonetext').textContent+=" "+tour+".";
-			return true;
+			/*grid[gj-1][gi-1] = grid[j-1][i-1];
+			grid[j-1][i-1]=retour;
+			enechec=false;
+			enfaitretour = false;*/
+			return verif_mouv(i,j);
 		}
 		else {
-			console.log(grid[j-1][i-1]);
+			/*grid[gj-1][gi-1] = grid[j-1][i-1];
+			grid[j-1][i-1]=retour;
+			afaitretour = true;
+			console.log("passe par la");*/
 			undowmove(gj-1,gi-1,j-gj,i-gi,grid[j-1][i-1]);
 			return false;
 		}
-	}}
+	}
 	return false;
 }
 
@@ -212,6 +235,7 @@ function echecs(i,j){
 		if (a-1>=0&&b-1>=0&&a-1<8&&b-1<8) {
 			if (grid[a-1][b-1].type == 'roi' && grid[j-1][i-1].type != 'pion' && grid[a-1][b-1].player != playerID){
 				alert('Vous êtes en échec'); // Le faire afficher sur le bon joueur
+				console.log("echecs",grid[j-1][i-1]);
 				enechec = true;
 				return true;
 			}
@@ -270,6 +294,7 @@ function nestplusenechec () { //Fonction qui verifie l'ensemble des pièces enne
 		for (var j = 1; j < 9; j++) {
 			if (grid[j-1][i-1]){
 				if(echecs(i,j)){
+					console.log(grid[j-1][i-1],"piece qui mets en echec");
 					return false;
 				}
 			}

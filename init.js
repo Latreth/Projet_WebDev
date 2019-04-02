@@ -1,5 +1,6 @@
 //var grid = initGrille();
 var lastimage=false;
+var retour ;
 
 var grid = new Array();
 grid = [[
@@ -188,6 +189,17 @@ function restrict(L, x, y){
 	return D;
 }
 
+/*function move3(x,y,dx,dy){
+	retour = grid[x+dx][y+dy];
+	grid[x+dx].splice(y+dy,1,grid[x][y]);
+	grid[x][y]=false;
+	console.log(grid[x+dx][y+dy]);
+	console.log(retour);
+	console.log(grid);
+	console.log(x+dx,y+dy);
+	console.log(grid[x+dx][y+dy]);
+}*/
+
 function move(x, y, dx, dy,id){
 	if (playerID == noir) {		
 		tour+=1;
@@ -254,15 +266,46 @@ function move2(x,y,dx,dy,id){
 }
 
 function undowmove(x,y,dx,dy,pion){
-	montour=true;
-	undowdeplacement(x,y,dx*40,dy*40,pion);
-	grid[x][y] = grid[x+dx][y+dy];
-	if (lastimage){
-		grid[x+dx][y+dy]={type:lastimage.type,player:lastimage.player};
-		lastimage=false;
+	if (grid[x][y].player == playerID) {
+		montour=true;
+		undowdeplacement(x,y,dx*40,dy*40,pion);
+		grid[x][y] = grid[x+dx][y+dy];
+		if (lastimage){
+			grid[x+dx][y+dy]={type:lastimage.type,player:lastimage.player};
+			lastimage=false;
+		}
+		else{
+			grid[x+dx][y+dy]=false;
+		}
 	}
-	else{
-		grid[x+dx][y+dy]=false;
+}
+
+function undowmove2(x,y,dx,dy,pion,id){
+	if (id!=playerID) {
+			montour=true;
+			undowdeplacement(x,y,dx*40,dy*40,pion);
+			grid[x][y] = grid[x+dx][y+dy];
+			if (lastimage){
+				grid[x+dx][y+dy]={type:lastimage.type,player:lastimage.player};
+				lastimage=false;
+			}
+			else{
+				grid[x+dx][y+dy]=false;
+			}
+	}
+	else {
+		sendCmd(JSON.stringify({type: 'undomove', x: x, y: y, dx: dx, dy: dy,pion:pion, room: roomID, player:playerID, texte:montexte}));
+		montour=true;
+		undowdeplacement(x,y,dx*40,dy*40,pion);
+		grid[x][y] = grid[x+dx][y+dy];
+		if (lastimage){
+			grid[x+dx][y+dy]={type:lastimage.type,player:lastimage.player};
+			lastimage=false;
+		}
+		else{
+			grid[x+dx][y+dy]=false;
+		}
+
 	}
 }
 

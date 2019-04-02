@@ -56,6 +56,11 @@ ws.on('connection', (socket, req) => {
 					if(c != "playercount") log(rooms[cmd.room][c].ID, JSON.stringify({type: "action", x: cmd.x, y: cmd.y, dx: cmd.dx, dy: cmd.dy, player: cmd.player, texte: cmd.texte}));
 				}
 			}
+			if(type == "undomove"){
+				for(let c in rooms[cmd.room]){
+					if(c!= "playercount") log(rooms[cmd.room][c].ID,JSON.stringify({type:  "undoaction",x:cmd.x,y:cmd.y,dx:cmd.dx,dy:cmd.dy,pion:cmd.pion,player:cmd.player}));
+				}
+			}
 			if(type == "changecolor"){
 				let k = true;
 				for(let c in rooms[cmd.room]){
