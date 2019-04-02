@@ -85,7 +85,17 @@ ws.onmessage = (msg) => {
 	}
 	else if (data.type == "mat") {
 		montour=false;
-		document.getElementById('end').style.visibility = "visible";
+		if (tour <=5) {
+			if (data.player == player) {//verifier si win se mets bien sur celui qui gagne
+				document.getElementById('hardwin').style.visibility = "visible";
+			}
+			else{
+				document.getElementById('hardloose').style.visibility = 'visible';
+			}
+		}
+		else {
+			document.getElementById('end').style.visibility  = 'visible';
+		}
 	}
 	else if(data.type == "undoaction"){
 		if(data.player != playerID){

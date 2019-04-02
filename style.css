@@ -226,3 +226,19 @@ p em{
 	transform: translate(-50%,-50%);
 	visibility: hidden;
 }
+
+#hardloose{
+	position: absolute;
+	top:45%;
+	left:47.5%;
+	transform: translate(-50%,-50%);
+	visibility: hidden;
+}
+
+#hardwin{
+	position: absolute;
+	top:45%;
+	left:47.5%;
+	transform: translate(-50%,-50%);
+	visibility: hidden;
+}
