@@ -66,6 +66,11 @@ ws.on('connection', (socket, req) => {
 					if(c!="playercount") log(rooms[cmd.room][c].ID,JSON.stringify({type: "promotion", pj:cmd.pj, pi:cmd.pi, a:cmd.a, player:cmd.player, piece : cmd.piece}));
 				}
 			}
+			if(type == "mat"){
+				for(let c in rooms[cmd.room]){
+					if(c!="playercount") log(rooms[cmd.room][c].ID,JSON.stringify({type: "mat", player:cmd.player}));
+				}
+			}
 			if(type == "changecolor"){
 				let k = true;
 				for(let c in rooms[cmd.room]){

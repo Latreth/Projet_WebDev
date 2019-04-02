@@ -80,6 +80,10 @@ ws.onmessage = (msg) => {
 			montour=true;
 		}
 	}
+	else if (data.type == "mat") {
+		montour=false;
+		document.getElementById('end').style.visibility = "visible";
+	}
 	else if(data.type == "undoaction"){
 		if(data.player != playerID){
 			undowmove2(data.x,data.y,data.dx,data.dy,data.pion,data.player,data.lastimage);
@@ -327,6 +331,20 @@ function estenechecs() {
 		for (var j = 1; j < 9; j++) {
 			if (grid[j-1][i-1]){
 				if(echecs(i,j)){
+					return estenmat();
+				}
+			}
+		}
+	}
+}
+
+function estenmat() {
+	for (var i = 1; i <9; i++) {
+		for (var j = 1; j < 9; j++) {
+			if (grid[j-1][i-1]){
+				if(echecs2(i,j)){
+					alert("Vous avez perdu, vous êtes mat !");
+					sendCmd(JSON.stringify({type: "mat", pseudo: pseudo, room: roomID, player: playerID}));
 					return 0;
 				}
 			}
