@@ -38,6 +38,9 @@ ws.onmessage = (msg) => {
 	}
 	else if(data.type == "nouveau_joueur"){
 		$('#zone_chat').append('<p><em>' + data.pseudo + ' a rejoint la partie</em></p>');
+		if (data.pseudo == "Daniel" || data.pseudo == "daniel"||data.pseudo == "Muller"||data.pseudo=="muller"){
+			$('#zone_chat').append('<img src="vingt.gif"> ');
+		}
 		console.log(data);
 	}
 	else if(data.type == "sortie_joueur"){
