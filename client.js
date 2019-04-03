@@ -89,7 +89,7 @@ ws.onmessage = (msg) => {
 	else if (data.type == "mat") {
 		montour=false;
 		if (tour <=5) {
-			if (data.player == player) {//verifier si win se mets bien sur celui qui gagne
+			if (data.player == playerID) {//verifier si win se mets bien sur celui qui gagne
 				document.getElementById('hardwin').style.visibility = "visible";
 			}
 			else{
@@ -99,7 +99,8 @@ ws.onmessage = (msg) => {
 		else {
 			document.getElementById('end').style.visibility  = 'visible';
 		}
-		document.getElementById('zonetext').textContent += "end.";
+		document.getElementById('zonetext').textContent += "mat.";
+		document.getElementById('back').style.visibility = 'visible';
 	}
 	else if(data.type == "undoaction"){
 		if(data.player != playerID){
